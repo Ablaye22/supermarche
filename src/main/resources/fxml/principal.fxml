@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.supermarche.controller.PrincipalController">
+
+    <left>
+        <VBox styleClass="barre-laterale" fx:id="barreLaterale">
+            <Label text="Supermarche" styleClass="label-titre-app"/>
+            <Label fx:id="labelUtilisateurConnecte" styleClass="label-utilisateur" text="Connecte en tant que..."/>
+
+            <Button fx:id="boutonTableauDeBord" text="Tableau de bord" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirTableauDeBord"/>
+            <Button fx:id="boutonCaisse" text="Caisse" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirCaisse"/>
+            <Button fx:id="boutonProduits" text="Produits" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirProduits"/>
+            <Button fx:id="boutonStocks" text="Stocks" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirStocks"/>
+            <Button fx:id="boutonFournisseurs" text="Fournisseurs" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirFournisseurs"/>
+            <Button fx:id="boutonClients" text="Clients" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirClients"/>
+            <Button fx:id="boutonRapports" text="Rapports" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirRapports"/>
+            <Button fx:id="boutonUtilisateurs" text="Utilisateurs" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirUtilisateurs"/>
+            <Button fx:id="boutonJournal" text="Journal d'audit" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirJournal"/>
+
+            <VBox VBox.vgrow="ALWAYS"/>
+
+            <Button fx:id="boutonDeconnexion" text="Se deconnecter" styleClass="bouton-nav" maxWidth="Infinity" onAction="#seDeconnecter">
+                <VBox.margin>
+                    <Insets bottom="20"/>
+                </VBox.margin>
+            </Button>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox fx:id="zoneContenu" style="-fx-background-color: #F4F6F8;">
+            <padding>
+                <Insets top="24" right="32" bottom="24" left="32"/>
+            </padding>
+        </VBox>
+    </center>
+
+</BorderPane>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.supermarche.controller.FournisseursController" spacing="16">
+
+    <Label text="Fournisseurs" styleClass="titre-page"/>
+
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <VBox spacing="10" prefWidth="650" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tableFournisseurs" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colRaisonSociale" text="Raison sociale" prefWidth="220"/>
+                    <TableColumn fx:id="colContact" text="Contact" prefWidth="150"/>
+                    <TableColumn fx:id="colTelephone" text="Telephone" prefWidth="130"/>
+                    <TableColumn fx:id="colEmail" text="Email" prefWidth="150"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <VBox spacing="10" prefWidth="380" styleClass="carte">
+            <Label fx:id="labelTitreFormulaire" text="Nouveau fournisseur" styleClass="label-section"/>
+
+            <Label text="Raison sociale"/>
+            <TextField fx:id="champRaisonSociale" styleClass="champ-saisie"/>
+
+            <Label text="SIRET"/>
+            <TextField fx:id="champSiret" styleClass="champ-saisie"/>
+
+            <Label text="Nom du contact"/>
+            <TextField fx:id="champContactNom" styleClass="champ-saisie"/>
+
+            <Label text="Telephone"/>
+            <TextField fx:id="champTelephone" styleClass="champ-saisie"/>
+
+            <Label text="Email"/>
+            <TextField fx:id="champEmail" styleClass="champ-saisie"/>
+
+            <Label text="Adresse"/>
+            <TextField fx:id="champAdresse" styleClass="champ-saisie"/>
+
+            <Button text="Enregistrer" styleClass="bouton-principal" onAction="#enregistrerFournisseur" maxWidth="Infinity"/>
+            <Button text="Nouvelle fiche" styleClass="bouton-secondaire" onAction="#nouveauFournisseur" maxWidth="Infinity"/>
+        </VBox>
+    </HBox>
+
+</VBox>

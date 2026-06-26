@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.supermarche.controller.CaisseController">
+
+    <!-- Bandeau d'ouverture / fermeture de session, visible uniquement quand pertinent -->
+    <top>
+        <VBox fx:id="panneauSession" spacing="12" styleClass="carte">
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Label text="Caisse :" style="-fx-font-weight: bold;"/>
+                <ComboBox fx:id="comboCaisse" prefWidth="200"/>
+                <Label fx:id="labelStatutSession" text="Aucune session ouverte" styleClass="badge badge-neutre"/>
+                <HBox HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="champFondOuverture" promptText="Fond de caisse (€)" prefWidth="160" styleClass="champ-saisie"/>
+                <Button text="Ouvrir la session" styleClass="bouton-succes" onAction="#ouvrirSession" fx:id="boutonOuvrirSession"/>
+                <Button text="Fermer la session" styleClass="bouton-danger" onAction="#fermerSession" fx:id="boutonFermerSession"/>
+            </HBox>
+            <padding><Insets bottom="12"/></padding>
+        </VBox>
+    </top>
+
+    <!-- Zone principale : recherche produit a gauche, panier/paiement a droite -->
+    <center>
+        <HBox spacing="16">
+            <padding><Insets top="16"/></padding>
+
+            <VBox spacing="10" HBox.hgrow="ALWAYS" prefWidth="500">
+                <Label text="Rechercher un produit (designation ou code-barre)" styleClass="label-section"/>
+                <TextField fx:id="champRechercheProduit" promptText="Scanner ou saisir un code-barre / nom..." styleClass="champ-saisie"/>
+
+                <TableView fx:id="tableProduits" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colProduitDesignation" text="Produit" prefWidth="220"/>
+                        <TableColumn fx:id="colProduitPrix" text="Prix TTC" prefWidth="90"/>
+                        <TableColumn fx:id="colProduitStock" text="Stock" prefWidth="70"/>
+                    </columns>
+                </TableView>
+                <Button text="Ajouter au panier" styleClass="bouton-secondaire" onAction="#ajouterAuPanier" maxWidth="Infinity"/>
+            </VBox>
+
+            <VBox spacing="10" prefWidth="480" styleClass="panneau-ticket carte">
+                <Label text="Ticket en cours" styleClass="label-section"/>
+
+                <TableView fx:id="tablePanier" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colPanierDesignation" text="Produit" prefWidth="180"/>
+                        <TableColumn fx:id="colPanierQuantite" text="Qte" prefWidth="60"/>
+                        <TableColumn fx:id="colPanierPrixUnitaire" text="Prix U." prefWidth="80"/>
+                        <TableColumn fx:id="colPanierTotal" text="Total" prefWidth="90"/>
+                    </columns>
+                </TableView>
+
+                <Button text="Retirer la ligne selectionnee" styleClass="bouton-secondaire" onAction="#retirerLigneSelectionnee" maxWidth="Infinity"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="Client (optionnel, carte fidelite) :"/>
+                    <TextField fx:id="champCarteFidelite" promptText="N° carte" prefWidth="140" styleClass="champ-saisie"/>
+                </HBox>
+
+                <HBox alignment="CENTER_RIGHT">
+                    <Label text="Total : "/>
+                    <Label fx:id="labelTotalTicket" text="0,00 €" styleClass="total-ticket"/>
+                </HBox>
+
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="Mode de paiement :"/>
+                    <ComboBox fx:id="comboModePaiement" prefWidth="160"/>
+                    <TextField fx:id="champMontantPaiement" promptText="Montant" prefWidth="100" styleClass="champ-saisie"/>
+                </HBox>
+
+                <Button text="Valider la vente" styleClass="bouton-principal" onAction="#validerVente" maxWidth="Infinity"
+                        style="-fx-padding: 14px; -fx-font-size: 15px;"/>
+                <Button text="Annuler le ticket" styleClass="bouton-secondaire" onAction="#viderPanier" maxWidth="Infinity"/>
+            </VBox>
+        </HBox>
+    </center>
+
+</BorderPane>

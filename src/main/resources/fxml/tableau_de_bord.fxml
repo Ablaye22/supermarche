@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.supermarche.controller.TableauDeBordController" spacing="20">
+
+    <Label text="Tableau de bord" styleClass="titre-page"/>
+    <Label text="Vue d'ensemble de l'activite du jour" styleClass="sous-titre-page"/>
+
+    <HBox spacing="16">
+        <VBox styleClass="carte carte-indicateur" prefWidth="220">
+            <Label fx:id="labelCaJour" text="0,00 €" styleClass="valeur"/>
+            <Label text="Chiffre d'affaires aujourd'hui" styleClass="libelle"/>
+        </VBox>
+        <VBox styleClass="carte carte-indicateur" prefWidth="220">
+            <Label fx:id="labelNbVentesJour" text="0" styleClass="valeur"/>
+            <Label text="Ventes aujourd'hui" styleClass="libelle"/>
+        </VBox>
+        <VBox styleClass="carte carte-indicateur" prefWidth="220">
+            <Label fx:id="labelPanierMoyen" text="0,00 €" styleClass="valeur"/>
+            <Label text="Panier moyen" styleClass="libelle"/>
+        </VBox>
+        <VBox styleClass="carte carte-indicateur" prefWidth="220">
+            <Label fx:id="labelValeurStock" text="0,00 €" styleClass="valeur"/>
+            <Label text="Valeur du stock" styleClass="libelle"/>
+        </VBox>
+    </HBox>
+
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <VBox styleClass="carte" prefWidth="500" VBox.vgrow="ALWAYS">
+            <Label text="Produits en alerte de stock" styleClass="label-section"/>
+            <TableView fx:id="tableAlertesStock" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colAlerteDesignation" text="Produit" prefWidth="280"/>
+                    <TableColumn fx:id="colAlerteStock" text="Stock actuel" prefWidth="100"/>
+                    <TableColumn fx:id="colAlerteSeuil" text="Seuil" prefWidth="80"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <VBox styleClass="carte" prefWidth="500" VBox.vgrow="ALWAYS">
+            <Label text="Meilleures ventes (30 derniers jours)" styleClass="label-section"/>
+            <TableView fx:id="tableMeilleuresVentes" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colTopDesignation" text="Produit" prefWidth="240"/>
+                    <TableColumn fx:id="colTopQuantite" text="Qte vendue" prefWidth="100"/>
+                    <TableColumn fx:id="colTopCa" text="CA" prefWidth="100"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </HBox>
+
+</VBox>

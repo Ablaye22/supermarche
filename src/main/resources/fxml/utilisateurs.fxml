@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.supermarche.controller.UtilisateursController" spacing="16">
+
+    <Label text="Utilisateurs" styleClass="titre-page"/>
+    <Label text="Gestion des comptes et des roles (reserve aux administrateurs)" styleClass="sous-titre-page"/>
+
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <VBox spacing="10" prefWidth="650" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tableUtilisateurs" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colNomComplet" text="Nom" prefWidth="180"/>
+                    <TableColumn fx:id="colNomUtilisateur" text="Identifiant" prefWidth="120"/>
+                    <TableColumn fx:id="colRole" text="Role" prefWidth="120"/>
+                    <TableColumn fx:id="colStatut" text="Statut" prefWidth="100"/>
+                </columns>
+            </TableView>
+            <HBox spacing="8">
+                <Button text="Activer" styleClass="bouton-succes" onAction="#activerUtilisateur"/>
+                <Button text="Desactiver" styleClass="bouton-danger" onAction="#desactiverUtilisateur"/>
+                <Button text="Deverrouiller le compte" styleClass="bouton-secondaire" onAction="#deverrouillerCompte"/>
+            </HBox>
+        </VBox>
+
+        <VBox spacing="10" prefWidth="380" styleClass="carte">
+            <Label text="Nouveau compte utilisateur" styleClass="label-section"/>
+
+            <Label text="Nom"/>
+            <TextField fx:id="champNom" styleClass="champ-saisie"/>
+
+            <Label text="Prenom"/>
+            <TextField fx:id="champPrenom" styleClass="champ-saisie"/>
+
+            <Label text="Email"/>
+            <TextField fx:id="champEmail" styleClass="champ-saisie"/>
+
+            <Label text="Identifiant de connexion"/>
+            <TextField fx:id="champNomUtilisateur" styleClass="champ-saisie"/>
+
+            <Label text="Mot de passe initial"/>
+            <PasswordField fx:id="champMotDePasse" styleClass="champ-saisie"/>
+            <Label text="Min. 10 caracteres, avec majuscule, minuscule et chiffre." style="-fx-font-size: 11px; -fx-text-fill: #5C6B7A;"/>
+
+            <Label text="Role"/>
+            <ComboBox fx:id="comboRole" maxWidth="Infinity"/>
+
+            <Button text="Creer le compte" styleClass="bouton-principal" onAction="#creerUtilisateur" maxWidth="Infinity"/>
+        </VBox>
+    </HBox>
+
+</VBox>

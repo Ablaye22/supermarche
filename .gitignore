@@ -1,0 +1,28 @@
+# Build
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Configuration sensible locale (NE JAMAIS COMMIT les vrais identifiants)
+src/main/resources/config/application-local.yml
+.env
+
+# Tests
+*.hprof
