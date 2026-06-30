@@ -11,7 +11,7 @@
 
     <left>
         <VBox styleClass="barre-laterale" fx:id="barreLaterale">
-            <Label text="Supermarche" styleClass="label-titre-app"/>
+            <Label fx:id="labelTitreApp" text="Supermarche" styleClass="label-titre-app"/>
             <Label fx:id="labelUtilisateurConnecte" styleClass="label-utilisateur" text="Connecte en tant que..."/>
 
             <Button fx:id="boutonTableauDeBord" text="Tableau de bord" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirTableauDeBord"/>

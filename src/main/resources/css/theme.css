@@ -118,9 +118,10 @@
 }
 
 .bouton-secondaire {
-    -fx-background-color: white;
+    -fx-background-color: rgb(4, 193, 240);
     -fx-text-fill: #2E6F95;
     -fx-border-color: #2E6F95;
+    -fx-font-size: 45px;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
     -fx-padding: 9px 19px;
@@ -135,6 +136,7 @@
     -fx-background-color: #B23A3A;
     -fx-text-fill: white;
     -fx-font-weight: bold;
+    -fx-font-size:30px;
     -fx-background-radius: 6px;
     -fx-padding: 10px 20px;
     -fx-cursor: hand;
@@ -156,7 +158,13 @@
 .bouton-succes:hover {
     -fx-background-color: #246741;
 }
-
+.bouton-fonction{
+    -fx-font-weight:bold;
+    -fx-background-radius:6px;
+    -fx-font-size:20px;
+    -fx-height: 500px;
+    -fx-width: 600px;
+}
 /* ----------------------- Champs de saisie ----------------------- */
 
 .champ-saisie {

@@ -3,9 +3,13 @@ package com.supermarche;
 import com.supermarche.config.DatabaseConfig;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +23,13 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        Rectangle2D screen = Screen.getPrimary().getVisualBounds();
+        stage.setWidth(screen.getWidth());
+        stage.setHeight(screen.getHeight());
         stagePrincipal = stage;
         stage.setTitle("Gestion Supermarche");
-        stage.setMinWidth(1920);
-        stage.setMinHeight(1080);
-
+        stage.setFullScreen(true);
+        stage.initStyle(StageStyle.UNDECORATED);
 
         afficherEcranConnexion();
 
@@ -57,8 +63,6 @@ public class MainApp extends Application {
 
     public static void afficherApplicationPrincipale() throws IOException {
         changerVue("/fxml/principal.fxml");
-        // stagePrincipal.setMaximized(true);
-        stagePrincipal.setHeight(500);
     }
 
     public static Stage getStagePrincipal() {

@@ -7,6 +7,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
 <StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.supermarche.controller.ConnexionController"
@@ -17,7 +19,13 @@
         <padding>
             <Insets top="40" right="40" bottom="40" left="40"/>
         </padding>
-
+        <ImageView fitWidth="150"
+           fitHeight="150"
+           preserveRatio="true">
+            <image>
+                <Image url="@/images/logo.png"/>
+            </image>
+        </ImageView>
         <Label text="Gestion Supermarche" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #1B2A41;"/>
         <Label text="Connectez-vous pour continuer" style="-fx-text-fill: #5C6B7A; -fx-padding: 0 0 20 0; -fx-font-size: 15px;"/>
 

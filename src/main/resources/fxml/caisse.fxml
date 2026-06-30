@@ -8,9 +8,11 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.supermarche.controller.CaisseController">
@@ -19,6 +21,8 @@
     <top>
         <VBox fx:id="panneauSession" spacing="12" styleClass="carte">
             <HBox spacing="12" alignment="CENTER_LEFT">
+                <Button fx:id="boutonReduireMenu" text="☰" styleClass="bouton-secondaire" onAction="#basculerMenuReduit"
+                        style="-fx-font-size: 16px; -fx-padding: 6px 12px;"/>
                 <Label text="Caisse :" style="-fx-font-weight: bold;"/>
                 <ComboBox fx:id="comboCaisse" prefWidth="200"/>
                 <Label fx:id="labelStatutSession" text="Aucune session ouverte" styleClass="badge badge-neutre"/>
@@ -31,26 +35,88 @@
         </VBox>
     </top>
 
-    <!-- Zone principale : recherche produit a gauche, panier/paiement a droite -->
+    <!-- Zone principale : pave numerique a gauche, panier/paiement a droite -->
     <center>
         <HBox spacing="16">
             <padding><Insets top="16"/></padding>
 
-            <VBox spacing="10" HBox.hgrow="ALWAYS" prefWidth="500">
-                <Label text="Rechercher un produit (designation ou code-barre)" styleClass="label-section"/>
-                <TextField fx:id="champRechercheProduit" promptText="Scanner ou saisir un code-barre / nom..." styleClass="champ-saisie"/>
+            <VBox spacing="12" prefWidth="1000" styleClass="carte">
+                <Label text="Saisie code-barres / quantite" styleClass="label-section"/>
+                <HBox spacing="8" alignment="CENTER" style="-fx-background-color: #1B2A41; -fx-background-radius: 6px; -fx-padding: 6px 6px 6px 14px;">
+                    <Label fx:id="labelAfficheurPave" text="0" styleClass="total-ticket"
+                        style="-fx-text-fill: white;" maxWidth="Infinity" alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS"/>
+                        <Button text="⌫" onAction="#effacerDernierChiffre" maxWidth="100" prefHeight="60"/>
+                </HBox>
+               <HBox spacing="20">
 
-                <TableView fx:id="tableProduits" VBox.vgrow="ALWAYS">
-                    <columns>
-                        <TableColumn fx:id="colProduitDesignation" text="Produit" prefWidth="220"/>
-                        <TableColumn fx:id="colProduitPrix" text="Prix TTC" prefWidth="90"/>
-                        <TableColumn fx:id="colProduitStock" text="Stock" prefWidth="70"/>
-                    </columns>
-                </TableView>
-                <Button text="Ajouter au panier" styleClass="bouton-secondaire" onAction="#ajouterAuPanier" maxWidth="Infinity"/>
+                    <Button text="Effacer"
+                            HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"
+                            prefHeight="150"
+                            onAction="#effacerSaisie"
+                            styleClass="bouton-fonction"
+                            style="-fx-background-color: red;"/>
+
+                    <Button text="Correction"
+                            HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"
+                            prefHeight="150"
+                            styleClass="bouton-fonction"
+                            style="-fx-background-color: red;"/>
+
+                    <Button text="EAN"
+                            HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"
+                            prefHeight="150"
+                            onAction="#validerCodeBarrePave"
+                            styleClass="bouton-fonction"
+                            style="-fx-background-color: green;"/>
+
+                    <Button text="Quantité"
+                            HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"
+                            prefHeight="150"
+                            onAction="#appliquerQuantitePave"
+                            styleClass="bouton-fonction"
+                            style="-fx-background-color: aqua;"/>
+
+                    <Button text="PLU"
+                            HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"
+                            prefHeight="150"
+                            styleClass="bouton-fonction"
+                            style="-fx-background-color: yellow;"/>
+
+                </HBox>
+                <Label fx:id="labelDernierProduitAjoute" text="Dernier article : (aucun)" wrapText="true"
+                       style="-fx-text-fill: #5C6B7A; -fx-font-size: 12px;"/>
+
+                <GridPane hgap="20" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33.3"/>
+                        <ColumnConstraints percentWidth="33.3"/>
+                        <ColumnConstraints percentWidth="33.3"/>
+                    </columnConstraints>
+
+                    <Button text="7" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Button text="8" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Button text="9" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+
+                    <Button text="4" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Button text="5" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Button text="6" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+
+                    <Button text="1" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Button text="2" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Button text="3" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+
+                    <Button text="00" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <Button text="0" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <Button text="." onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+                </GridPane>
             </VBox>
 
-            <VBox spacing="10" prefWidth="480" styleClass="panneau-ticket carte">
+            <VBox spacing="10" prefWidth="600" styleClass="panneau-ticket carte">
                 <Label text="Ticket en cours" styleClass="label-section"/>
 
                 <TableView fx:id="tablePanier" VBox.vgrow="ALWAYS">
@@ -62,7 +128,7 @@
                     </columns>
                 </TableView>
 
-                <Button text="Retirer la ligne selectionnee" styleClass="bouton-secondaire" onAction="#retirerLigneSelectionnee" maxWidth="Infinity"/>
+                
 
                 <HBox alignment="CENTER_LEFT" spacing="8">
                     <Label text="Client (optionnel, carte fidelite) :"/>
@@ -80,9 +146,9 @@
                     <TextField fx:id="champMontantPaiement" promptText="Montant" prefWidth="100" styleClass="champ-saisie"/>
                 </HBox>
 
-                <Button text="Valider la vente" styleClass="bouton-principal" onAction="#validerVente" maxWidth="Infinity"
+                <Button text="Valider la vente" styleClass="bouton-succes" onAction="#validerVente" maxWidth="Infinity"
                         style="-fx-padding: 14px; -fx-font-size: 15px;"/>
-                <Button text="Annuler le ticket" styleClass="bouton-secondaire" onAction="#viderPanier" maxWidth="Infinity"/>
+                <Button text="Annuler le ticket" styleClass="bouton-danger" onAction="#viderPanier" maxWidth="Infinity"/>
             </VBox>
         </HBox>
     </center>

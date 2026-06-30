@@ -31,17 +31,15 @@ import java.util.Optional;
 public class CaisseController {
 
     @FXML private VBox panneauSession;
+    @FXML private Button boutonReduireMenu;
     @FXML private ComboBox<Caisse> comboCaisse;
     @FXML private Label labelStatutSession;
     @FXML private TextField champFondOuverture;
     @FXML private Button boutonOuvrirSession;
     @FXML private Button boutonFermerSession;
 
-    @FXML private TextField champRechercheProduit;
-    @FXML private TableView<Produit> tableProduits;
-    @FXML private TableColumn<Produit, String> colProduitDesignation;
-    @FXML private TableColumn<Produit, String> colProduitPrix;
-    @FXML private TableColumn<Produit, String> colProduitStock;
+    @FXML private Label labelAfficheurPave;
+    @FXML private Label labelDernierProduitAjoute;
 
     @FXML private TableView<LignePanier> tablePanier;
     @FXML private TableColumn<LignePanier, String> colPanierDesignation;
@@ -57,6 +55,9 @@ public class CaisseController {
     private final ObservableList<LignePanier> panier = FXCollections.observableArrayList();
     private SessionCaisse sessionOuverte;
 
+    /** Saisie en cours sur le pave numerique, sous forme de texte brut (chiffres uniquement). */
+    private final StringBuilder saisieCourante = new StringBuilder();
+
     @FXML
     public void initialize() {
         configurerColonnes();
@@ -65,24 +66,20 @@ public class CaisseController {
         comboModePaiement.getSelectionModel().select(ModePaiement.ESPECES);
         tablePanier.setItems(panier);
 
-        champRechercheProduit.setOnAction(e -> rechercherProduit());
         comboCaisse.valueProperty().addListener((obs, ancienne, nouvelle) -> verifierSessionPourCaisse());
 
         rafraichirEtatBoutonsSession();
+        rafraichirAfficheurPave();
+
+        // En arrivant sur l'ecran Caisse, on s'assure que la barre laterale
+        // demarre en mode normal (elle a pu rester reduite si on revient
+        // sur cet ecran apres l'avoir quitte en mode reduit).
+        if (PrincipalController.getInstanceCourante() != null) {
+            PrincipalController.getInstanceCourante().definirBarreReduite(false);
+        }
     }
 
     private void configurerColonnes() {
-        colProduitDesignation.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getDesignation()));
-        colProduitPrix.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(formaterMontant(c.getValue().getPrixVenteTtc())));
-        colProduitStock.setCellValueFactory(c -> {
-            int idDepot = ContexteApplication.getInstance().getIdDepotCourant() != null
-                    ? ContexteApplication.getInstance().getIdDepotCourant() : -1;
-            int quantite = idDepot > 0
-                    ? ContexteApplication.getInstance().getStockService().lireQuantite(c.getValue().getId(), idDepot)
-                    : 0;
-            return new javafx.beans.property.SimpleStringProperty(String.valueOf(quantite));
-        });
-
         colPanierDesignation.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getDesignation()));
         colPanierQuantite.setCellValueFactory(c -> new javafx.beans.property.SimpleIntegerProperty(c.getValue().getQuantite()));
         colPanierPrixUnitaire.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(formaterMontant(c.getValue().getPrixUnitaire())));
@@ -195,39 +192,127 @@ public class CaisseController {
         }
     }
 
+    // ------------------------------------------------------------------
+    // Menu lateral reductible (mode icones) propre a l'ecran Caisse
+    // ------------------------------------------------------------------
+
     @FXML
-    private void rechercherProduit() {
-        String motCle = champRechercheProduit.getText();
-        if (motCle == null || motCle.isBlank()) {
+    private void basculerMenuReduit() {
+        PrincipalController principal = PrincipalController.getInstanceCourante();
+        if (principal == null) {
             return;
         }
-        // Si le mot-cle correspond exactement a un code-barre, on l'ajoute directement
-        // au panier (cas du flux normal : scan d'un produit a la caisse).
-        Optional<Produit> parCodeBarre = ContexteApplication.getInstance().getProduitService().trouverParCodeBarre(motCle.trim());
-        if (parCodeBarre.isPresent()) {
-            ajouterProduitAuPanier(parCodeBarre.get());
-            champRechercheProduit.clear();
+        principal.definirBarreReduite(!principal.isBarreReduite());
+    }
+
+    // ------------------------------------------------------------------
+    // Pave numerique : saisie de code-barres puis, optionnellement, de
+    // quantite a appliquer sur la derniere ligne ajoutee au panier.
+    // ------------------------------------------------------------------
+
+    @FXML
+    private void saisirChiffre(javafx.event.ActionEvent evenement) {
+        Button bouton = (Button) evenement.getSource();
+        // Limite raisonnable pour un code-barres EAN-13 ou une quantite : evite une saisie demesuree par erreur.
+        if (saisieCourante.length() >= 13) {
             return;
         }
-        List<Produit> resultats = ContexteApplication.getInstance().getProduitService().rechercher(motCle);
-        tableProduits.setItems(FXCollections.observableArrayList(resultats));
+        saisieCourante.append(bouton.getText());
+        rafraichirAfficheurPave();
     }
 
     @FXML
-    private void ajouterAuPanier() {
-        Produit selectionne = tableProduits.getSelectionModel().getSelectedItem();
-        if (selectionne == null) {
-            DialogueUtil.afficherAvertissement("Aucun produit selectionne", "Selectionnez un produit dans la liste.");
-            return;
-        }
-        ajouterProduitAuPanier(selectionne);
+    private void effacerSaisie() {
+        saisieCourante.setLength(0);
+        rafraichirAfficheurPave();
     }
 
-    private void ajouterProduitAuPanier(Produit produit) {
+    @FXML
+    private void effacerDernierChiffre() {
+        if (saisieCourante.length() > 0) {
+            saisieCourante.deleteCharAt(saisieCourante.length() - 1);
+        }
+        rafraichirAfficheurPave();
+    }
+
+    private void rafraichirAfficheurPave() {
+        labelAfficheurPave.setText(saisieCourante.length() == 0 ? "0" : saisieCourante.toString());
+    }
+
+    /** Bouton "Valider code-barres" : recherche le produit et l'ajoute au panier avec une quantite de 1. */
+    @FXML
+    private void validerCodeBarrePave() {
+        String codeBarre = saisieCourante.toString();
+        if (codeBarre.isBlank()) {
+            DialogueUtil.afficherAvertissement("Saisie vide", "Saisissez un code-barres avant de valider.");
+            return;
+        }
         if (sessionOuverte == null) {
             DialogueUtil.afficherAvertissement("Session requise", "Ouvrez une session de caisse avant d'enregistrer une vente.");
             return;
         }
+
+        Optional<Produit> produit = ContexteApplication.getInstance().getProduitService().trouverParCodeBarre(codeBarre);
+        if (produit.isEmpty()) {
+            DialogueUtil.afficherAvertissement("Produit introuvable", "Aucun produit ne correspond au code-barres " + codeBarre + ".");
+            effacerSaisie();
+            return;
+        }
+
+        ajouterProduitAuPanier(produit.get(), 1);
+        labelDernierProduitAjoute.setText("Dernier article : " + produit.get().getDesignation());
+        effacerSaisie();
+    }
+
+    /**
+     * Bouton "Appliquer comme quantite" : applique le nombre saisi sur le
+     * pave comme nouvelle quantite de la derniere ligne ajoutee au panier
+     * (flux classique de caisse : on scanne le produit, puis si besoin on
+     * tape la quantite reelle, ex. plusieurs unites du meme article).
+     */
+    @FXML
+    private void appliquerQuantitePave() {
+        String saisie = saisieCourante.toString();
+        if (saisie.isBlank()) {
+            DialogueUtil.afficherAvertissement("Saisie vide", "Saisissez une quantite avant de l'appliquer.");
+            return;
+        }
+        if (panier.isEmpty()) {
+            DialogueUtil.afficherAvertissement("Panier vide", "Ajoutez d'abord un produit via son code-barres.");
+            effacerSaisie();
+            return;
+        }
+
+        int quantiteSaisie;
+        try {
+            quantiteSaisie = Integer.parseInt(saisie);
+        } catch (NumberFormatException e) {
+            DialogueUtil.afficherAvertissement("Quantite invalide", "Saisissez un nombre entier.");
+            return;
+        }
+        if (quantiteSaisie <= 0) {
+            DialogueUtil.afficherAvertissement("Quantite invalide", "La quantite doit etre superieure a zero.");
+            return;
+        }
+
+        LignePanier derniereLigne = panier.get(panier.size() - 1);
+        int idDepot = ContexteApplication.getInstance().getIdDepotCourant();
+        int stockDisponible = ContexteApplication.getInstance().getStockService()
+                .lireQuantite(derniereLigne.getProduit().getId(), idDepot);
+
+        if (quantiteSaisie > stockDisponible) {
+            DialogueUtil.afficherAvertissement("Stock insuffisant",
+                    "Stock disponible pour " + derniereLigne.getDesignation() + " : " + stockDisponible);
+            return;
+        }
+
+        derniereLigne.setQuantite(quantiteSaisie);
+        tablePanier.refresh();
+        rafraichirTotal();
+        effacerSaisie();
+    }
+
+    private void ajouterProduitAuPanier(Produit produit, int quantiteAjoutee) {
         int idDepot = ContexteApplication.getInstance().getIdDepotCourant();
         int stockDisponible = ContexteApplication.getInstance().getStockService().lireQuantite(produit.getId(), idDepot);
 
@@ -236,17 +321,17 @@ public class CaisseController {
                 .findFirst();
 
         int quantiteDejaDansPanier = ligneExistante.map(LignePanier::getQuantite).orElse(0);
-        if (quantiteDejaDansPanier + 1 > stockDisponible) {
+        if (quantiteDejaDansPanier + quantiteAjoutee > stockDisponible) {
             DialogueUtil.afficherAvertissement("Stock insuffisant",
                     "Stock disponible pour " + produit.getDesignation() + " : " + stockDisponible);
             return;
         }
 
         if (ligneExistante.isPresent()) {
-            ligneExistante.get().setQuantite(ligneExistante.get().getQuantite() + 1);
+            ligneExistante.get().setQuantite(ligneExistante.get().getQuantite() + quantiteAjoutee);
             tablePanier.refresh();
         } else {
-            panier.add(new LignePanier(produit, 1));
+            panier.add(new LignePanier(produit, quantiteAjoutee));
         }
         rafraichirTotal();
     }
@@ -267,6 +352,7 @@ public class CaisseController {
         }
         panier.clear();
         champCarteFidelite.clear();
+        labelDernierProduitAjoute.setText("Dernier article : (aucun)");
         rafraichirTotal();
     }
 
@@ -332,6 +418,7 @@ public class CaisseController {
             panier.clear();
             champCarteFidelite.clear();
             champMontantPaiement.clear();
+            labelDernierProduitAjoute.setText("Dernier article : (aucun)");
             rafraichirTotal();
         } catch (SupermarcheException e) {
             DialogueUtil.afficherErreur("Vente impossible", e.getMessage());

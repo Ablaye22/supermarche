@@ -14,6 +14,11 @@ import java.io.IOException;
 
 public class PrincipalController {
 
+    /** Instance courante, exposee pour permettre a un ecran enfant (ex: Caisse) de reduire/etendre la barre laterale. */
+    private static PrincipalController instanceCourante;
+
+    @FXML private VBox barreLaterale;
+    @FXML private Label labelTitreApp;
     @FXML private Label labelUtilisateurConnecte;
     @FXML private VBox zoneContenu;
 
@@ -26,19 +31,73 @@ public class PrincipalController {
     @FXML private Button boutonRapports;
     @FXML private Button boutonUtilisateurs;
     @FXML private Button boutonJournal;
+    @FXML private Button boutonDeconnexion;
 
     private Button boutonActif;
+    private boolean barreReduite = false;
+
+    /** Libelles complets des boutons, memorises pour pouvoir les restaurer apres une reduction en icones. */
+    private final java.util.Map<Button, String> libellesComplets = new java.util.HashMap<>();
 
     @FXML
     public void initialize() {
+        instanceCourante = this;
+
         Utilisateur utilisateur = ContexteApplication.getInstance().getAuthService().getUtilisateurConnecte();
         if (utilisateur != null) {
             labelUtilisateurConnecte.setText(
                     utilisateur.getEmploye().getNomComplet() + " — " + utilisateur.getRole().getLibelle());
         }
 
+        memoriserLibelles();
         appliquerVisibiliteSelonPermissions(utilisateur);
         ouvrirTableauDeBord();
+    }
+
+    private void memoriserLibelles() {
+        for (Button b : new Button[]{boutonTableauDeBord, boutonCaisse, boutonProduits, boutonStocks,
+                boutonFournisseurs, boutonClients, boutonRapports, boutonUtilisateurs, boutonJournal, boutonDeconnexion}) {
+            libellesComplets.put(b, b.getText());
+        }
+    }
+
+    /**
+     * Reduit la barre laterale a une mini-barre d'icones (boutons sans
+     * libelle, largeur fixe reduite) ou la restaure a sa largeur normale
+     * avec libelles. Utilise notamment par l'ecran Caisse, qui a besoin
+     * de davantage d'espace horizontal pour le pave numerique.
+     */
+    public void definirBarreReduite(boolean reduite) {
+        if (this.barreReduite == reduite) {
+            return;
+        }
+        this.barreReduite = reduite;
+
+        barreLaterale.setPrefWidth(reduite ? 64 : 220);
+        labelTitreApp.setVisible(!reduite);
+        labelTitreApp.setManaged(!reduite);
+        labelUtilisateurConnecte.setVisible(!reduite);
+        labelUtilisateurConnecte.setManaged(!reduite);
+
+        for (java.util.Map.Entry<Button, String> entree : libellesComplets.entrySet()) {
+            Button bouton = entree.getKey();
+            bouton.setText(reduite ? "" : entree.getValue());
+        }
+    }
+
+    public boolean isBarreReduite() {
+        return barreReduite;
+    }
+
+    /**
+     * Acces a l'instance courante du controleur principal, pour les
+     * controleurs d'ecrans enfants (charges dans zoneContenu) qui ont
+     * besoin d'agir sur la navigation globale, comme reduire la barre
+     * laterale. Simple et suffisant ici car une seule fenetre principale
+     * existe a la fois dans cette application desktop.
+     */
+    public static PrincipalController getInstanceCourante() {
+        return instanceCourante;
     }
 
     /**
@@ -76,6 +135,12 @@ public class PrincipalController {
 
     private void chargerVue(String cheminFxml, Button boutonCorrespondant) {
         try {
+            // En quittant l'ecran Caisse vers une autre page, la barre laterale
+            // est toujours restauree a sa taille normale (la reduction en icones
+            // n'a de sens que pendant la saisie en caisse).
+            if (barreReduite) {
+                definirBarreReduite(false);
+            }
             FXMLLoader loader = new FXMLLoader(getClass().getResource(cheminFxml));
             Parent vue = loader.load();
             zoneContenu.getChildren().setAll(vue);
