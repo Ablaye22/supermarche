@@ -7,6 +7,7 @@ public class Produit {
 
     private Integer id;
     private String codeBarre;
+    private String codePLU;
     private String designation;
     private String description;
     private Categorie categorie;
@@ -42,6 +43,12 @@ public class Produit {
 
     public void setCodeBarre(String codeBarre) {
         this.codeBarre = codeBarre;
+    }
+    public String getPLU(){
+        return this.codePLU;
+    }
+    public void setPLU(String plu){
+        this.codePLU = plu;
     }
 
     public String getDesignation() {

@@ -2,12 +2,12 @@ package com.supermarche.dao;
 
 import com.supermarche.config.DatabaseConfig;
 import com.supermarche.exception.AccesDonneesException;
-import com.supermarche.model.CodeRole;
 import com.supermarche.model.Employe;
 import com.supermarche.model.Role;
 import com.supermarche.model.Utilisateur;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,6 +42,50 @@ public class UtilisateurDao {
             return utilisateur;
         } catch (SQLException e) {
             throw new AccesDonneesException("Erreur lors de la creation de l'utilisateur", e);
+        }
+    }
+
+    public Utilisateur modifier(Utilisateur utilisateur){
+        String sql1 = """
+                UPDATE employes SET 
+                nom = ?, 
+                prenom = ?, 
+                email = ?, 
+                telephone = ?,
+                date_embauche = ?, 
+                actif = ?
+                WHERE id_employe = ?
+                """;
+        String sql2 = """
+               UPDATE utilisateurs SET  
+               id_employe = ? , 
+               nom_utilisateur = ? , 
+               id_role = ?, 
+               actif = ?
+                WHERE id_utilisateur = ?
+                """;
+        try (Connection cnx = DatabaseConfig.getConnection();
+            PreparedStatement ps1 = cnx.prepareStatement(sql1);
+            PreparedStatement ps2 = cnx.prepareStatement(sql2)) {
+
+            ps1.setString(1,utilisateur.getEmploye().getNom());
+            ps1.setString(2,utilisateur.getEmploye().getPrenom());
+            ps1.setString(3,utilisateur.getEmploye().getEmail());
+            ps1.setString(4,utilisateur.getEmploye().getTelephone());
+            ps1.setDate(5,utilisateur.getEmploye().getDateEmbauche() != null ? Date.valueOf(utilisateur.getEmploye().getDateEmbauche()) : null);
+            ps1.setBoolean(6,utilisateur.getEmploye().isActif());
+            ps1.setInt(7,utilisateur.getEmploye().getId());
+            ps1.executeUpdate();
+
+            ps2.setInt(1,utilisateur.getEmploye().getId());
+            ps2.setString(2,utilisateur.getNomUtilisateur());
+            ps2.setInt(3,utilisateur.getRole().getId());
+            ps2.setBoolean(4,utilisateur.isActif());
+            ps2.setInt(5,utilisateur.getId());
+            ps2.executeUpdate();
+            return utilisateur;
+        } catch (SQLException e) {
+            throw new AccesDonneesException("Erreur lors de la modification de l'utilisateur", e);
         }
     }
 

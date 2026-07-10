@@ -5,6 +5,7 @@ import com.supermarche.service.AuthService;
 import com.supermarche.service.CaisseService;
 import com.supermarche.service.ClientService;
 import com.supermarche.service.FournisseurService;
+import com.supermarche.service.PlanningService;
 import com.supermarche.service.ProduitService;
 import com.supermarche.service.RapportService;
 import com.supermarche.service.StockService;
@@ -31,6 +32,7 @@ public final class ContexteApplication {
     private final ClientService clientService = new ClientService(authService);
     private final FournisseurService fournisseurService = new FournisseurService(authService);
     private final UtilisateurService utilisateurService = new UtilisateurService(authService);
+    private final PlanningService planningService = new PlanningService(authService);
     private final RapportService rapportService = new RapportService(authService);
 
     /** Caisse et depot choisis a la connexion pour ce poste de travail (persistent pendant la session JavaFX). */
@@ -80,6 +82,9 @@ public final class ContexteApplication {
 
     public UtilisateurService getUtilisateurService() {
         return utilisateurService;
+    }
+    public PlanningService getPlanningService(){
+        return planningService;
     }
 
     public RapportService getRapportService() {

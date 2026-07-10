@@ -1,8 +1,8 @@
 package com.supermarche.controller;
 
 import com.supermarche.model.Produit;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+// import javafx.beans.property.SimpleIntegerProperty;
+// import javafx.beans.property.SimpleStringProperty;
 
 import java.math.BigDecimal;
 

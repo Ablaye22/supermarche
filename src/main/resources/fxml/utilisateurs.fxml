@@ -18,8 +18,12 @@
 
     <HBox spacing="16" VBox.vgrow="ALWAYS">
         <VBox spacing="10" prefWidth="650" VBox.vgrow="ALWAYS">
+        <Button text="Nouveau Utilisateur" styleClass="bouton-principal" onAction="#nouveauUtilisateur"/>
+    
             <TableView fx:id="tableUtilisateurs" VBox.vgrow="ALWAYS">
                 <columns>
+                    <TableColumn fx:id="colId" text="IdEmploye" prefWidth="40"/>
+                     <TableColumn fx:id="champIdUtilisateur" text="IdUtilisateur" prefWidth="40"/>
                     <TableColumn fx:id="colNomComplet" text="Nom" prefWidth="180"/>
                     <TableColumn fx:id="colNomUtilisateur" text="Identifiant" prefWidth="120"/>
                     <TableColumn fx:id="colRole" text="Role" prefWidth="120"/>
@@ -34,7 +38,11 @@
         </VBox>
 
         <VBox spacing="10" prefWidth="380" styleClass="carte">
-            <Label text="Nouveau compte utilisateur" styleClass="label-section"/>
+            <Label fx:id="LabelTitreFormulaire" text="Nouveau compte utilisateur" styleClass="label-section"/>
+
+            <Label fx:id="IdLabel" text="Id"/>
+            <TextField fx:id="champId" styleClass="champ-saisie" disable="true"/>
+
 
             <Label text="Nom"/>
             <TextField fx:id="champNom" styleClass="champ-saisie"/>
@@ -55,7 +63,7 @@
             <Label text="Role"/>
             <ComboBox fx:id="comboRole" maxWidth="Infinity"/>
 
-            <Button text="Creer le compte" styleClass="bouton-principal" onAction="#creerUtilisateur" maxWidth="Infinity"/>
+            <Button fx:id="creerModifier" text="Creer le compte" styleClass="bouton-principal" onAction="#enregistrer" maxWidth="Infinity"/>
         </VBox>
     </HBox>
 

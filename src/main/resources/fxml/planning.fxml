@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.supermarche.controller.PlanningController"
+      spacing="16">
+
+    <Label text="Planning des employés" styleClass="titre-page"/>
+
+    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+
+        <!-- ======================== ONGLET LISTE ======================== -->
+        <Tab text="Liste">
+            <HBox spacing="16">
+
+                <VBox spacing="10" prefWidth="700" VBox.vgrow="ALWAYS">
+                    <HBox spacing="10">
+                        <ComboBox fx:id="comboRechercheEmploye" promptText="Employé"/>
+                        <DatePicker fx:id="dateRecherche"/>
+                        <Button text="Rechercher" onAction="#rechercherPlanning" styleClass="bouton-secondaire"/>
+                        <Button text="Nouveau planning" onAction="#nouveauPlanning" styleClass="bouton-principal"/>
+                    </HBox>
+                    <TableView fx:id="tableauPlanning" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colonneEmploye" text="Employé" prefWidth="180"/>
+                            <TableColumn fx:id="colonneDate" text="Date" prefWidth="120"/>
+                            <TableColumn fx:id="colonneHoraire" text="Horaire" prefWidth="140"/>
+                            <TableColumn fx:id="colonnePoste" text="Poste" prefWidth="140"/>
+                            <TableColumn fx:id="colonneStatut" text="Statut" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <VBox spacing="10" prefWidth="380" styleClass="carte">
+                    <Label fx:id="labelTitre" text="Nouveau planning" styleClass="label-section"/>
+                    <Label text="Employé"/>
+                    <ComboBox fx:id="comboUtilisateur" maxWidth="Infinity"/>
+                    <Label text="Date"/>
+                    <DatePicker fx:id="champDate"/>
+                    <Label text="Heure de début"/>
+                    <TextField fx:id="champHeureDebut" promptText="08:00"/>
+                    <Label text="Heure de fin"/>
+                    <TextField fx:id="champHeureFin" promptText="17:00"/>
+                    <Label text="Pause (minutes)"/>
+                    <Spinner fx:id="spinnerPause" editable="true"/>
+                    <Label text="Poste"/>
+                    <TextField fx:id="champPoste" promptText="Poste"/>
+                    <Label text="Statut"/>
+                    <ComboBox fx:id="comboStatut" maxWidth="Infinity"/>
+                    <Label text="Observation"/>
+                    <TextArea fx:id="champObservation" prefRowCount="3" wrapText="true"/>
+
+                    <HBox spacing="10">
+                        <Button text="Enregistrer" styleClass="bouton-principal" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#enregistrerPlanning"/>
+                        <Button text="Supprimer" styleClass="bouton-danger" onAction="#supprimerPlanning"/>
+                    </HBox>
+
+                    <Button text="Nouveau" styleClass="bouton-secondaire" maxWidth="Infinity" onAction="#nouveauPlanning"/>
+                </VBox>
+
+            </HBox>
+        </Tab>
+
+        <!-- ======================== ONGLET VUE HEBDOMADAIRE ======================== -->
+        <Tab text="Vue hebdomadaire">
+            <VBox spacing="10">
+                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Button fx:id="btnSemainePrecedente" text="◀ Semaine précédente" onAction="#semainePrecedente"/>
+                    <Label fx:id="labelSemaine" styleClass="label-section"/>
+                    <Button fx:id="btnSemaineSuivante" text="Semaine suivante ▶" onAction="#semaineSuivante"/>
+                    <Button text="Exporter en PDF" styleClass="bouton-principal" onAction="#exporterPdfSemaine"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <TextField fx:id="champRechercheNomGrille" promptText="Rechercher un employé par nom..." prefWidth="260"/>
+                </HBox>
+
+                <TableView fx:id="tableauGrilleSemaine" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colonneEmployeGrille" text="Employé" prefWidth="180"/>
+                        <TableColumn fx:id="colonneJour0" text="Lundi" prefWidth="140"/>
+                        <TableColumn fx:id="colonneJour1" text="Mardi" prefWidth="140"/>
+                        <TableColumn fx:id="colonneJour2" text="Mercredi" prefWidth="140"/>
+                        <TableColumn fx:id="colonneJour3" text="Jeudi" prefWidth="140"/>
+                        <TableColumn fx:id="colonneJour4" text="Vendredi" prefWidth="140"/>
+                        <TableColumn fx:id="colonneJour5" text="Samedi" prefWidth="140"/>
+                        <TableColumn fx:id="colonneJour6" text="Dimanche" prefWidth="140"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+    </TabPane>
+
+</VBox>

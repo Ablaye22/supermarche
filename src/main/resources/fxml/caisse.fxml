@@ -4,153 +4,249 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.control.PasswordField?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.supermarche.controller.CaisseController">
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+                fx:controller="com.supermarche.controller.CaisseController">
 
-    <!-- Bandeau d'ouverture / fermeture de session, visible uniquement quand pertinent -->
-    <top>
-        <VBox fx:id="panneauSession" spacing="12" styleClass="carte">
-            <HBox spacing="12" alignment="CENTER_LEFT">
-                <Button fx:id="boutonReduireMenu" text="☰" styleClass="bouton-secondaire" onAction="#basculerMenuReduit"
-                        style="-fx-font-size: 16px; -fx-padding: 6px 12px;"/>
-                <Label text="Caisse :" style="-fx-font-weight: bold;"/>
-                <ComboBox fx:id="comboCaisse" prefWidth="200"/>
-                <Label fx:id="labelStatutSession" text="Aucune session ouverte" styleClass="badge badge-neutre"/>
-                <HBox HBox.hgrow="ALWAYS"/>
-                <TextField fx:id="champFondOuverture" promptText="Fond de caisse (€)" prefWidth="160" styleClass="champ-saisie"/>
-                <Button text="Ouvrir la session" styleClass="bouton-succes" onAction="#ouvrirSession" fx:id="boutonOuvrirSession"/>
-                <Button text="Fermer la session" styleClass="bouton-danger" onAction="#fermerSession" fx:id="boutonFermerSession"/>
-            </HBox>
-            <padding><Insets bottom="12"/></padding>
-        </VBox>
-    </top>
-
-    <!-- Zone principale : pave numerique a gauche, panier/paiement a droite -->
-    <center>
-        <HBox spacing="16">
-            <padding><Insets top="16"/></padding>
-
-            <VBox spacing="12" prefWidth="1000" styleClass="carte">
-                <Label text="Saisie code-barres / quantite" styleClass="label-section"/>
-                <HBox spacing="8" alignment="CENTER" style="-fx-background-color: #1B2A41; -fx-background-radius: 6px; -fx-padding: 6px 6px 6px 14px;">
-                    <Label fx:id="labelAfficheurPave" text="0" styleClass="total-ticket"
-                        style="-fx-text-fill: white;" maxWidth="Infinity" alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS"/>
-                        <Button text="⌫" onAction="#effacerDernierChiffre" maxWidth="100" prefHeight="60"/>
+        <BorderPane>
+        <top>
+                <VBox fx:id="panneauSession" spacing="12" styleClass="carte">
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="Caisse :" style="-fx-font-weight: bold;"/>
+                        <ComboBox fx:id="comboCaisse" prefWidth="200"/>
+                        <Label fx:id="labelStatutSession" text="Aucune session ouverte"
+                        styleClass="badge badge-neutre"/>
+                        <HBox HBox.hgrow="ALWAYS"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Date :" style="-fx-font-weight: bold; -fx-font-size: 20px;"/>
+                                <Label fx:id="labelDate"/>
+                                <Label text="Heure :" style="-fx-font-weight: bold; -fx-font-size: 20px;"/>
+                                <Label fx:id="labelHeure" style="-fx-font-size: 20px;"/>
+                        </HBox>
+                        <Button fx:id="boutonDeconnexion" text="Depart"
+                                styleClass="bouton-succes" onAction="#seDeconnecter"/>
+                        <Button fx:id="boutonVerrouiller" text="&#128274; Verrouiller"
+                                styleClass="bouton-secondaire" onAction="#verrouillerCaisse"
+                                visible="false" managed="false"/>
+                        <TextField fx:id="champFondOuverture" promptText="Fond de caisse (€)"
+                                prefWidth="160" styleClass="champ-saisie"/>
+                        <Button fx:id="boutonOuvrirSession" text="Ouvrir la session"
+                                styleClass="bouton-succes" onAction="#ouvrirSession"/>
+                        <Button fx:id="boutonFermerSession" text="Fermer la session"
+                                styleClass="bouton-danger" onAction="#fermerSession"/>
                 </HBox>
-               <HBox spacing="20">
+                <padding><Insets bottom="12"/></padding>
+                </VBox>
+        </top>
 
-                    <Button text="Effacer"
-                            HBox.hgrow="ALWAYS"
-                            maxWidth="Infinity"
-                            prefHeight="150"
-                            onAction="#effacerSaisie"
-                            styleClass="bouton-fonction"
-                            style="-fx-background-color: red;"/>
+        <center>
+                <HBox spacing="16">
+                <padding><Insets top="16"/></padding>
 
-                    <Button text="Correction"
-                            HBox.hgrow="ALWAYS"
-                            maxWidth="Infinity"
-                            prefHeight="150"
-                            styleClass="bouton-fonction"
-                            style="-fx-background-color: red;"/>
+                <!-- Colonne gauche : bascule + panneau actif -->
+                <VBox spacing="12" prefWidth="1000" styleClass="carte">
 
-                    <Button text="EAN"
-                            HBox.hgrow="ALWAYS"
-                            maxWidth="Infinity"
-                            prefHeight="150"
-                            onAction="#validerCodeBarrePave"
-                            styleClass="bouton-fonction"
-                            style="-fx-background-color: green;"/>
+                        <!-- Boutons bascule mode -->
+                        <HBox spacing="8">
+                        <Button fx:id="boutonModePave" text="&#9783; Pave numerique"
+                                styleClass="bouton-principal" onAction="#activerModePave"
+                                maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="boutonModeCategories" text="&#9635; Categories"
+                                styleClass="bouton-secondaire" onAction="#activerModeCategories"
+                                maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                        </HBox>
 
-                    <Button text="Quantité"
-                            HBox.hgrow="ALWAYS"
-                            maxWidth="Infinity"
-                            prefHeight="150"
-                            onAction="#appliquerQuantitePave"
-                            styleClass="bouton-fonction"
-                            style="-fx-background-color: aqua;"/>
+                        <!-- ============================================ -->
+                        <!-- PANNEAU PAVE NUMERIQUE                       -->
+                        <!-- ============================================ -->
+                        <VBox fx:id="panneauPave" spacing="10">
 
-                    <Button text="PLU"
-                            HBox.hgrow="ALWAYS"
-                            maxWidth="Infinity"
-                            prefHeight="150"
-                            styleClass="bouton-fonction"
-                            style="-fx-background-color: yellow;"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                                <HBox alignment="CENTER" HBox.hgrow="ALWAYS"
+                                style="-fx-background-color: #f8fbff; -fx-background-radius: 6;
+                                        -fx-border-color: black; -fx-border-width: 2;
+                                        -fx-border-radius: 6; -fx-padding: 6 14 6 14;">
+                                <Label fx:id="labelAfficheurPave" text="Saisie code-barres / quantite" styleClass="total-ticket"
+                                        maxWidth="Infinity" alignment="CENTER_RIGHT"
+                                        HBox.hgrow="ALWAYS"/>
+                                </HBox>
+                                <Button text="⌫" onAction="#effacerDernierChiffre"
+                                        prefWidth="80" prefHeight="60"/>
+                                <Button text="Eff" onAction="#effacerSaisie"
+                                        prefWidth="80" prefHeight="60"/>
+                        </HBox>
+
+                        <HBox spacing="10">
+                                <Button text="Correction" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="150" onAction="#retirerLigneSelectionnee" style="-fx-background-color: red; -fx-text-fill: white;" styleClass="bouton-fonction" />
+                                <Button text="Retour" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="150" style="-fx-background-color: #0404e9; -fx-text-fill: white;" styleClass="bouton-fonction" />
+                                <Button text="EAN" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="150" onAction="#validerCodeBarrePave" style="-fx-background-color: green; -fx-text-fill: white;" styleClass="bouton-fonction" />
+                                <Button text="Quantite" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="150" onAction="#appliquerQuantitePave" style="-fx-background-color: cyan;" styleClass="bouton-fonction" />
+                                <Button text="PLU" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="150" onAction="#validercodePLU" style="-fx-background-color: yellow;" styleClass="bouton-fonction"/>
+                                <Button text="Pack" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="150" style="-fx-background-color: yellow;" styleClass="bouton-fonction"/>
+                        </HBox>
+
+                        <Label fx:id="labelDernierProduitAjoute" text="Dernier article : (aucun)" wrapText="true" style="-fx-text-fill: #5C6B7A; -fx-font-size: 12px;"/>
+
+                        <GridPane hgap="20" vgap="20">
+                                <columnConstraints>
+                                <ColumnConstraints percentWidth="33.3"/>
+                                <ColumnConstraints percentWidth="33.3"/>
+                                <ColumnConstraints percentWidth="33.3"/>
+                                </columnConstraints>
+
+                                <Button text="7" onAction="#saisirChiffre" styleClass="bouton-pave-numerique"
+                                        maxWidth="Infinity" prefHeight="130"
+                                        GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                <Button text="8" onAction="#saisirChiffre" styleClass="bouton-pave-numerique"
+                                        maxWidth="Infinity" prefHeight="130"
+                                        GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                                <Button text="9" onAction="#saisirChiffre" styleClass="bouton-pave-numerique"
+                                        maxWidth="Infinity" prefHeight="130"
+                                        GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+
+                                <Button text="4" onAction="#saisirChiffre" styleClass="bouton-pave-numerique"
+                                        maxWidth="Infinity" prefHeight="130"
+                                        GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                <Button text="5" onAction="#saisirChiffre" styleClass="bouton-pave-numerique"
+                                        maxWidth="Infinity" prefHeight="130"
+                                        GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                <Button text="6" onAction="#saisirChiffre" styleClass="bouton-pave-numerique"
+                                        maxWidth="Infinity" prefHeight="130"
+                                        GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+
+                                <Button text="1" onAction="#saisirChiffre" styleClass="bouton-pave-numerique"
+                                        maxWidth="Infinity" prefHeight="130"
+                                        GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                <Button text="2" onAction="#saisirChiffre" styleClass="bouton-pave-numerique"
+                                        maxWidth="Infinity" prefHeight="130"
+                                        GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                <Button text="3" onAction="#saisirChiffre" styleClass="bouton-pave-numerique"
+                                        maxWidth="Infinity" prefHeight="130"
+                                        GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+
+                                <Button text="00" onAction="#saisirDoubleZero"
+                                        styleClass="bouton-pave-numerique"
+                                        maxWidth="Infinity" prefHeight="130"
+                                        GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                                <Button text="0" onAction="#saisirChiffre" styleClass="bouton-pave-numerique"
+                                        maxWidth="Infinity" prefHeight="130"
+                                        GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                                <Button text="." onAction="#saisirVirgule"
+                                        styleClass="bouton-pave-numerique"
+                                        maxWidth="Infinity" prefHeight="130"
+                                        GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+                        </GridPane>
+                        </VBox>
+
+                        <!-- ============================================ -->
+                        <!-- PANNEAU CATEGORIES                           -->
+                        <!-- ============================================ -->
+                        <VBox fx:id="panneauCategories" spacing="10" visible="false" managed="false">
+                                <FlowPane fx:id="conteneurBoutonsCategories" hgap="8" vgap="8"/>
+                                        <Label fx:id="labelCategorieSelectionnee" text="Selectionnez une categorie" style="-fx-font-weight: bold; -fx-text-fill: #1B2A41;"/>
+                                <TabPane fx:id="tabsSousCategories" styleClass="onglets-categories" tabClosingPolicy="UNAVAILABLE" prefHeight="42" visible="false" managed="false"/>
+                                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                                         <content>
+                                                <VBox style="-fx-padding: 10 10 10 10;">
+                                                        <FlowPane fx:id="grilleProduitsCategorie" hgap="10" vgap="10" style="-fx-background-color: transparent;"/>
+                                                </VBox>
+                                        </content>
+                                </ScrollPane>
+                        </VBox>
+
+                </VBox>
+                <!-- Fin colonne gauche -->
+
+                <!-- Colonne droite : panier + paiement -->
+                <VBox spacing="12" prefWidth="800" styleClass="panneau-ticket carte">
+                         <padding>
+                                <Insets top="10" right="10" bottom="20" left="10"/>
+                        </padding>
+                        <Label text="Ticket en cours" styleClass="label-section"/>
+
+                        <TableView fx:id="tablePanier" VBox.vgrow="ALWAYS">
+                        <columns>
+                                <TableColumn fx:id="colPanierDesignation" text="Designation" prefWidth="300"/>
+                                <TableColumn fx:id="colPanierQuantite" text="Qte" prefWidth="100"/>
+                                <TableColumn fx:id="colPanierPrixUnitaire" text="Prix U." prefWidth="150"/>
+                                <TableColumn fx:id="colPanierTotal" text="Total" prefWidth="150"/>
+                        </columns>
+                        </TableView>
+
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="Client (optionnel, carte fidelite) :"/>
+                        <TextField fx:id="champCarteFidelite" promptText="N° carte"
+                                prefWidth="140" styleClass="champ-saisie"/>
+                        </HBox>
+
+                        <HBox alignment="CENTER_RIGHT">
+                        <Label text="Total : "/>
+                        <Label fx:id="labelTotalTicket" text="0,00 €" styleClass="total-ticket"/>
+                        </HBox>
+
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Mode de paiement :"/>
+                        <ComboBox fx:id="comboModePaiement" prefWidth="160"/>
+                        <TextField fx:id="champMontantPaiement" promptText="Montant"
+                                prefWidth="100" styleClass="champ-saisie"/>
+                        </HBox>
+
+                        <Button text="Valider la vente" styleClass="bouton-succes"
+                                onAction="#validerVente" maxWidth="Infinity"
+                                style="-fx-padding: 14px; -fx-font-size: 15px;"/>
+                        <Button text="Annuler le ticket" styleClass="bouton-danger"
+                                onAction="#viderPanier" maxWidth="Infinity"/>
+                </VBox>
 
                 </HBox>
-                <Label fx:id="labelDernierProduitAjoute" text="Dernier article : (aucun)" wrapText="true"
-                       style="-fx-text-fill: #5C6B7A; -fx-font-size: 12px;"/>
-
-                <GridPane hgap="20" vgap="20">
-                    <columnConstraints>
-                        <ColumnConstraints percentWidth="33.3"/>
-                        <ColumnConstraints percentWidth="33.3"/>
-                        <ColumnConstraints percentWidth="33.3"/>
-                    </columnConstraints>
-
-                    <Button text="7" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Button text="8" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-                    <Button text="9" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
-
-                    <Button text="4" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Button text="5" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-                    <Button text="6" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
-
-                    <Button text="1" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Button text="2" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                    <Button text="3" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
-
-                    <Button text="00" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <Button text="0" onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-                    <Button text="." onAction="#saisirChiffre" styleClass="bouton-secondaire" maxWidth="Infinity" prefHeight="130" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
-                </GridPane>
-            </VBox>
-
-            <VBox spacing="10" prefWidth="600" styleClass="panneau-ticket carte">
-                <Label text="Ticket en cours" styleClass="label-section"/>
-
-                <TableView fx:id="tablePanier" VBox.vgrow="ALWAYS">
-                    <columns>
-                        <TableColumn fx:id="colPanierDesignation" text="Produit" prefWidth="180"/>
-                        <TableColumn fx:id="colPanierQuantite" text="Qte" prefWidth="60"/>
-                        <TableColumn fx:id="colPanierPrixUnitaire" text="Prix U." prefWidth="80"/>
-                        <TableColumn fx:id="colPanierTotal" text="Total" prefWidth="90"/>
-                    </columns>
-                </TableView>
-
-                
-
-                <HBox alignment="CENTER_LEFT" spacing="8">
-                    <Label text="Client (optionnel, carte fidelite) :"/>
-                    <TextField fx:id="champCarteFidelite" promptText="N° carte" prefWidth="140" styleClass="champ-saisie"/>
-                </HBox>
-
-                <HBox alignment="CENTER_RIGHT">
-                    <Label text="Total : "/>
-                    <Label fx:id="labelTotalTicket" text="0,00 €" styleClass="total-ticket"/>
-                </HBox>
-
-                <HBox spacing="8" alignment="CENTER_LEFT">
-                    <Label text="Mode de paiement :"/>
-                    <ComboBox fx:id="comboModePaiement" prefWidth="160"/>
-                    <TextField fx:id="champMontantPaiement" promptText="Montant" prefWidth="100" styleClass="champ-saisie"/>
-                </HBox>
-
-                <Button text="Valider la vente" styleClass="bouton-succes" onAction="#validerVente" maxWidth="Infinity"
-                        style="-fx-padding: 14px; -fx-font-size: 15px;"/>
-                <Button text="Annuler le ticket" styleClass="bouton-danger" onAction="#viderPanier" maxWidth="Infinity"/>
-            </VBox>
-        </HBox>
-    </center>
+        </center>
 
 </BorderPane>
+
+    <!-- ============================================================ -->
+    <!-- ECRAN DE VERROUILLAGE (superpose, cache par defaut)          -->
+    <!-- ============================================================ -->
+    <VBox fx:id="panneauVerrouillage" alignment="CENTER" spacing="20"
+          visible="false" managed="false"
+          style="-fx-background-color: rgba(0,0,0,0.82);">
+
+        <VBox alignment="CENTER" spacing="16" maxWidth="360"
+              style="-fx-background-color: white; -fx-background-radius: 12px;
+                     -fx-padding: 40px;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 20, 0, 0, 6);">
+
+            <Label text="&#128274;" style="-fx-font-size: 48px;"/>
+            <Label text="Caisse verrouillee" styleClass="titre-page"/>
+            <Label fx:id="labelNomCaissierVerrou" text=""
+                   style="-fx-text-fill: #5C6B7A; -fx-font-size: 13px;"/>
+            <Label text="Saisissez votre mot de passe pour continuer"
+                   style="-fx-text-fill: #5C6B7A;" wrapText="true"/>
+
+            <PasswordField fx:id="champMotDePasseVerrou"
+                           promptText="Mot de passe" maxWidth="Infinity"
+                           styleClass="champ-saisie"
+                           style="-fx-font-size: 14px; -fx-padding: 10px;"/>
+
+            <Label fx:id="labelErreurVerrou" text=""
+                   style="-fx-text-fill: #B23A3A;" visible="false" managed="false"/>
+
+            <Button text="Deverrouiller" styleClass="bouton-principal"
+                    onAction="#deverrouillerCaisse" maxWidth="Infinity"
+                    style="-fx-padding: 12px; -fx-font-size: 14px;"
+                    defaultButton="true"/>
+        </VBox>
+    </VBox>
+</StackPane>

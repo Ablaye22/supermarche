@@ -2,20 +2,13 @@ package com.supermarche.model;
 
 import java.time.LocalDateTime;
 
-/**
- * Compte de connexion d'un employe. Volontairement separe de l'entite
- * Employe : un employe peut exister sans avoir de compte (ex: livreur),
- * et cela isole les donnees d'authentification sensibles.
- */
+
 public class Utilisateur {
 
     private Integer id;
     private Employe employe;
     private String nomUtilisateur;
-
-    /** Hash BCrypt uniquement. Le mot de passe en clair ne doit JAMAIS transiter au-dela de la saisie. */
     private String motDePasseHash;
-
     private Role role;
     private boolean actif = true;
     private boolean compteVerrouille = false;
@@ -108,5 +101,10 @@ public class Utilisateur {
 
     public void setDateCreation(LocalDateTime dateCreation) {
         this.dateCreation = dateCreation;
+    }
+
+    @Override
+    public String toString(){
+        return this.employe.getPrenom()+ " "+ this.employe.getNom();
     }
 }

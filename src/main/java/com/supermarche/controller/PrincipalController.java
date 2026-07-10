@@ -8,9 +8,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
+
 import java.io.IOException;
+import java.util.Objects;
 
 public class PrincipalController {
 
@@ -18,19 +22,22 @@ public class PrincipalController {
     private static PrincipalController instanceCourante;
 
     @FXML private VBox barreLaterale;
+    @FXML private VBox menuLateral;
     @FXML private Label labelTitreApp;
     @FXML private Label labelUtilisateurConnecte;
     @FXML private VBox zoneContenu;
 
     @FXML private Button boutonTableauDeBord;
-    @FXML private Button boutonCaisse;
+    @FXML private Button boutonReduireMenu;
     @FXML private Button boutonProduits;
     @FXML private Button boutonStocks;
     @FXML private Button boutonFournisseurs;
     @FXML private Button boutonClients;
     @FXML private Button boutonRapports;
     @FXML private Button boutonUtilisateurs;
+    @FXML private Button boutonPlanning;
     @FXML private Button boutonJournal;
+    @FXML private Button boutonActivitesJournalier;
     @FXML private Button boutonDeconnexion;
 
     private Button boutonActif;
@@ -51,11 +58,41 @@ public class PrincipalController {
 
         memoriserLibelles();
         appliquerVisibiliteSelonPermissions(utilisateur);
-        ouvrirTableauDeBord();
+
+         if (PrincipalController.getInstanceCourante() != null) {
+            PrincipalController.getInstanceCourante().definirBarreReduite(false);
+        }
+        // ouvrirTableauDeBord();
+        chargerIcone(boutonProduits, "produits.png");
+        chargerIcone(boutonStocks, "stocks.png");
+        chargerIcone(boutonFournisseurs, "fournisseurs.png");
+        chargerIcone(boutonClients, "clients.png");
+        chargerIcone(boutonRapports, "rapports.png");
+        chargerIcone(boutonUtilisateurs, "utilisateurs.png");
+        chargerIcone(boutonJournal, "journal.png");
+        chargerIcone(boutonActivitesJournalier, "activites.png");
+        chargerIcone(boutonTableauDeBord, "ventes.png");
+        chargerIcone(boutonPlanning, "planning.png");
+       
+    }
+
+    private void chargerIcone(Button bouton, String nomFichier) {
+        Image image = new Image(
+            Objects.requireNonNull(
+                getClass().getResourceAsStream("/images/slogan/" + nomFichier)
+            )
+        );
+
+        ImageView iv = new ImageView(image);
+        iv.setFitWidth(40);
+        iv.setFitHeight(40);
+        iv.setPreserveRatio(true);
+
+        bouton.setGraphic(iv);
     }
 
     private void memoriserLibelles() {
-        for (Button b : new Button[]{boutonTableauDeBord, boutonCaisse, boutonProduits, boutonStocks,
+        for (Button b : new Button[]{boutonTableauDeBord, boutonProduits, boutonStocks,
                 boutonFournisseurs, boutonClients, boutonRapports, boutonUtilisateurs, boutonJournal, boutonDeconnexion}) {
             libellesComplets.put(b, b.getText());
         }
@@ -72,7 +109,7 @@ public class PrincipalController {
             return;
         }
         this.barreReduite = reduite;
-
+        menuLateral.setPrefWidth(reduite ? 0     : 250);
         barreLaterale.setPrefWidth(reduite ? 64 : 220);
         labelTitreApp.setVisible(!reduite);
         labelTitreApp.setManaged(!reduite);
@@ -120,8 +157,8 @@ public class PrincipalController {
         boutonFournisseurs.setVisible(utilisateur.possedePermission("FOURNISSEUR_GERER"));
         boutonFournisseurs.setManaged(utilisateur.possedePermission("FOURNISSEUR_GERER"));
 
-        boutonCaisse.setVisible(utilisateur.possedePermission("VENTE_CREER"));
-        boutonCaisse.setManaged(utilisateur.possedePermission("VENTE_CREER"));
+        // boutonCaisse.setVisible(utilisateur.possedePermission("VENTE_CREER"));
+        // boutonCaisse.setManaged(utilisateur.possedePermission("VENTE_CREER"));
 
         boutonRapports.setVisible(utilisateur.possedePermission("RAPPORT_VOIR"));
         boutonRapports.setManaged(utilisateur.possedePermission("RAPPORT_VOIR"));
@@ -167,9 +204,14 @@ public class PrincipalController {
     }
 
     @FXML
-    private void ouvrirCaisse() {
-        chargerVue("/fxml/caisse.fxml", boutonCaisse);
+    private void ouvrirActivitesJournalier(){
+        chargerVue("/fxml/tableau_de_bord.fxml", boutonTableauDeBord);
     }
+
+    // @FXML
+    // private void ouvrirCaisse() {
+    //     chargerVue("/fxml/caisse.fxml", boutonCaisse);
+    // }
 
     @FXML
     private void ouvrirProduits() {
@@ -202,6 +244,11 @@ public class PrincipalController {
     }
 
     @FXML
+    private void ouvrirPlanning(){
+        chargerVue("/fxml/planning.fxml",boutonPlanning);
+    }
+
+    @FXML
     private void ouvrirJournal() {
         chargerVue("/fxml/journal_audit.fxml", boutonJournal);
     }
@@ -219,5 +266,14 @@ public class PrincipalController {
         } catch (IOException e) {
             DialogueUtil.afficherErreur("Erreur", "Impossible de revenir a l'ecran de connexion.");
         }
+    }
+
+    @FXML
+    private void basculerMenuReduit() {
+        PrincipalController principal = PrincipalController.getInstanceCourante();
+        if (principal == null) {
+            return;
+        }
+        principal.definirBarreReduite(!principal.isBarreReduite());
     }
 }

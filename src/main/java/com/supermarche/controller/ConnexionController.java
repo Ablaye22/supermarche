@@ -36,7 +36,7 @@ public class ConnexionController {
                     .seConnecter(nomUtilisateur, motDePasse);
             champMotDePasse.clear();
             initialiserDepotParDefaut();
-            com.supermarche.MainApp.afficherApplicationPrincipale();
+            com.supermarche.MainApp.afficherApplicationPrincipale(utilisateur);
         } catch (AuthentificationException e) {
             afficherErreur(e.getMessage());
             champMotDePasse.clear();

@@ -119,6 +119,7 @@ CREATE TABLE produits (
     actif               BOOLEAN NOT NULL DEFAULT TRUE,
     date_creation       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     date_modification   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    plus                VARCHAR(5),
     FOREIGN KEY (id_categorie) REFERENCES categories(id_categorie) ON DELETE SET NULL,
     FOREIGN KEY (id_fournisseur_principal) REFERENCES fournisseurs(id_fournisseur) ON DELETE SET NULL,
     INDEX idx_produit_designation (designation)
@@ -266,3 +267,17 @@ CREATE TABLE paiements (
 ) ENGINE=InnoDB;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE planning (
+    id_planning INT AUTO_INCREMENT PRIMARY KEY,
+    id_employe INT NOT NULL,
+    date_travail DATE NOT NULL,
+    heure_debut TIME NOT NULL,
+    heure_fin TIME NOT NULL,
+    pause_minutes INT DEFAULT 0,
+    poste VARCHAR(100),
+    statut ENUM('Prévu','Présent','Absent','Congé') DEFAULT 'Prévu',
+
+    FOREIGN KEY(id_employe)
+        REFERENCES employes(id_employe)
+);

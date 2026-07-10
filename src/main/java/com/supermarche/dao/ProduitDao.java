@@ -6,7 +6,7 @@ import com.supermarche.model.Categorie;
 import com.supermarche.model.Fournisseur;
 import com.supermarche.model.Produit;
 
-import java.math.BigDecimal;
+// import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,29 +21,60 @@ public class ProduitDao {
 
     public Produit creer(Produit p) {
         String sql = """
-                INSERT INTO produits (code_barre, designation, description, id_categorie,
+                INSERT INTO produits (code_barre, plu, designation, description, id_categorie,
                        id_fournisseur_principal, prix_achat_ht, prix_vente_ttc, taux_tva,
                        unite, seuil_alerte_stock, actif)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
                 """;
-        try (Connection cnx = DatabaseConfig.getConnection();
-             PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            remplirParametres(ps, p);
-            ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    p.setId(rs.getInt(1));
+          String  sql1 = """
+                    INSERT INTO stocks (id_produit, id_depot,quantite) 
+                    VALUES(?,?,?)
+                    """;
+        Connection cnx = null;
+        try{
+            cnx = DatabaseConfig.getConnection();
+             cnx.setAutoCommit(false);
+        try (
+             PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps1 = cnx.prepareStatement(sql1)) {
+                remplirParametres(ps, p);
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        p.setId(rs.getInt(1));
+                    }
+                }
+                ps1.setInt(1, p.getId());
+                ps1.setInt(2, 1);
+                ps1.setInt(3, 0);
+                ps1.executeUpdate();
+
+                cnx.commit();
+
+                return p;
+            }
+        } catch (SQLException e) {
+             if (cnx != null) {
+                try {
+                    cnx.rollback();
+                } catch (SQLException ignored) {
                 }
             }
-            return p;
-        } catch (SQLException e) {
             throw new AccesDonneesException("Erreur lors de la creation du produit", e);
+        }finally {
+            if (cnx != null) {
+                try {
+                    cnx.setAutoCommit(true);
+                    cnx.close();
+                } catch (SQLException ignored) {
+                }
+            }
         }
     }
 
     public void modifier(Produit p) {
         String sql = """
-                UPDATE produits SET code_barre = ?, designation = ?, description = ?,
+                UPDATE produits SET code_barre = ?,plu = ?, designation = ?, description = ?,
                        id_categorie = ?, id_fournisseur_principal = ?, prix_achat_ht = ?,
                        prix_vente_ttc = ?, taux_tva = ?, unite = ?, seuil_alerte_stock = ?, actif = ?
                 WHERE id_produit = ?
@@ -51,7 +82,7 @@ public class ProduitDao {
         try (Connection cnx = DatabaseConfig.getConnection();
              PreparedStatement ps = cnx.prepareStatement(sql)) {
             remplirParametres(ps, p);
-            ps.setInt(12, p.getId());
+            ps.setInt(13, p.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new AccesDonneesException("Erreur lors de la modification du produit id=" + p.getId(), e);
@@ -60,24 +91,30 @@ public class ProduitDao {
 
     private void remplirParametres(PreparedStatement ps, Produit p) throws SQLException {
         ps.setString(1, p.getCodeBarre());
-        ps.setString(2, p.getDesignation());
-        ps.setString(3, p.getDescription());
-        if (p.getCategorie() != null && p.getCategorie().getId() != null) {
-            ps.setInt(4, p.getCategorie().getId());
-        } else {
-            ps.setNull(4, java.sql.Types.INTEGER);
+        if(p.getPLU() != null && !p.getPLU().isBlank()){
+            ps.setString(2, p.getPLU());
         }
-        if (p.getFournisseurPrincipal() != null && p.getFournisseurPrincipal().getId() != null) {
-            ps.setInt(5, p.getFournisseurPrincipal().getId());
+        else{
+            ps.setNull(2, java.sql.Types.NULL);
+        }
+        ps.setString(3, p.getDesignation());
+        ps.setString(4, p.getDescription());
+        if (p.getCategorie() != null && p.getCategorie().getId() != null) {
+            ps.setInt(5, p.getCategorie().getId());
         } else {
             ps.setNull(5, java.sql.Types.INTEGER);
         }
-        ps.setBigDecimal(6, p.getPrixAchatHt());
-        ps.setBigDecimal(7, p.getPrixVenteTtc());
-        ps.setBigDecimal(8, p.getTauxTva());
-        ps.setString(9, p.getUnite());
-        ps.setInt(10, p.getSeuilAlerteStock());
-        ps.setBoolean(11, p.isActif());
+        if (p.getFournisseurPrincipal() != null && p.getFournisseurPrincipal().getId() != null) {
+            ps.setInt(6, p.getFournisseurPrincipal().getId());
+        } else {
+            ps.setNull(6, java.sql.Types.INTEGER);
+        }
+        ps.setBigDecimal(7, p.getPrixAchatHt());
+        ps.setBigDecimal(8, p.getPrixVenteTtc());
+        ps.setBigDecimal(9, p.getTauxTva());
+        ps.setString(10, p.getUnite());
+        ps.setInt(11, p.getSeuilAlerteStock());
+        ps.setBoolean(12, p.isActif());
     }
 
     public Optional<Produit> trouverParId(int id) {
@@ -105,6 +142,18 @@ public class ProduitDao {
             throw new AccesDonneesException("Erreur lors de la recherche du produit code-barre=" + codeBarre, e);
         }
     }
+    public Optional<Produit> trouverParCodePLU(String codePLU){
+        String sql = baseSelect() + " WHERE p.plu = ?";
+        try (Connection cnx = DatabaseConfig.getConnection();
+             PreparedStatement ps = cnx.prepareStatement(sql)) {
+            ps.setString(1, codePLU);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? Optional.of(mapper(rs)) : Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new AccesDonneesException("Erreur lors de la recherche du produit code-PLU=" + codePLU, e);
+        }
+    }
 
     public List<Produit> rechercherParDesignation(String motCle, boolean inclureInactifs) {
         StringBuilder sql = new StringBuilder(baseSelect());
@@ -126,6 +175,23 @@ public class ProduitDao {
             return resultats;
         } catch (SQLException e) {
             throw new AccesDonneesException("Erreur lors de la recherche de produits", e);
+        }
+    }
+
+    public List<Produit> listerParCategorie(int idCategorie) {
+        String sql = baseSelect() + " WHERE p.id_categorie = ? AND p.actif = TRUE ORDER BY p.designation";
+        try (Connection cnx = DatabaseConfig.getConnection();
+             PreparedStatement ps = cnx.prepareStatement(sql)) {
+            ps.setInt(1, idCategorie);
+            List<Produit> resultats = new ArrayList<>();
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    resultats.add(mapper(rs));
+                }
+            }
+            return resultats;
+        } catch (SQLException e) {
+            throw new AccesDonneesException("Erreur lors de la liste des produits par categorie", e);
         }
     }
 
@@ -179,6 +245,7 @@ public class ProduitDao {
         Produit p = new Produit();
         p.setId(rs.getInt("id_produit"));
         p.setCodeBarre(rs.getString("code_barre"));
+        p.setPLU(rs.getString("plu"));
         p.setDesignation(rs.getString("designation"));
         p.setDescription(rs.getString("description"));
 

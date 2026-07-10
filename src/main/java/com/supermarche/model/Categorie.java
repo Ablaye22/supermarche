@@ -4,7 +4,8 @@ public class Categorie {
 
     private Integer id;
     private String nom;
-    private Integer idCategorieParente;
+    private Integer idSousCategorie;
+    private String nomSousCategorie;
 
     public Categorie() {
     }
@@ -30,12 +31,20 @@ public class Categorie {
         this.nom = nom;
     }
 
-    public Integer getIdCategorieParente() {
-        return idCategorieParente;
+    public Integer getIdSousCategorie() {
+        return idSousCategorie;
     }
 
-    public void setIdCategorieParente(Integer idCategorieParente) {
-        this.idCategorieParente = idCategorieParente;
+    public void setIdSousCategorie(Integer idSousCategorie) {
+        this.idSousCategorie = idSousCategorie;
+    }
+
+    public String getNomSousCategorie() {
+        return nomSousCategorie;
+    }
+
+    public void setNomSousCategorie(String nomSousCategorie) {
+        this.nomSousCategorie = nomSousCategorie;
     }
 
     @Override

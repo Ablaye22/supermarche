@@ -1,7 +1,7 @@
 package com.supermarche.service;
 
 import com.supermarche.dao.ClientDao;
-import com.supermarche.exception.SupermarcheException;
+// import com.supermarche.exception.SupermarcheException;
 import com.supermarche.model.Client;
 
 import java.util.List;

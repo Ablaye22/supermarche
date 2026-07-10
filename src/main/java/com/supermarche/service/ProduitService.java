@@ -8,6 +8,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+// import javax.swing.text.html.Option;
+
 public class ProduitService {
 
     private final ProduitDao produitDao = new ProduitDao();
@@ -56,9 +58,20 @@ public class ProduitService {
     public Optional<Produit> trouverParCodeBarre(String codeBarre) {
         return produitDao.trouverParCodeBarre(codeBarre);
     }
+    public Optional<Produit> trouverParCodePLU(String codePLU){
+        return produitDao.trouverParCodePLU(codePLU);
+    }
 
     public List<Produit> rechercher(String motCle) {
         return produitDao.rechercherParDesignation(motCle, false);
+    }
+
+    public List<com.supermarche.model.Categorie> listerCategories() {
+        return new com.supermarche.dao.CategorieDao().listerToutes();
+    }
+
+    public List<Produit> listerParCategorie(int idCategorie) {
+        return produitDao.listerParCategorie(idCategorie);
     }
 
     public List<Produit> listerTous() {

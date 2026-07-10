@@ -1,6 +1,10 @@
 package com.supermarche;
 
+// import com.supermarche.config.ContexteApplication;
 import com.supermarche.config.DatabaseConfig;
+import com.supermarche.model.CodeRole;
+import com.supermarche.model.Utilisateur;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -61,8 +65,15 @@ public class MainApp extends Application {
         stagePrincipal.centerOnScreen();
     }
 
-    public static void afficherApplicationPrincipale() throws IOException {
-        changerVue("/fxml/principal.fxml");
+    public static void afficherApplicationPrincipale(Utilisateur utilisateur) throws IOException {
+        // changerVue("/fxml/principal.fxml");
+        // Utilisateur utilisateur = ContexteApplication.getInstance()
+        //     .getAuthService().getUtilisateurConnecte();
+         if (utilisateur != null && utilisateur.getRole().getCode() == CodeRole.CAISSIER) {
+            changerVue("/fxml/caisse.fxml");
+        } else {
+           changerVue("/fxml/principal.fxml");
+         }
     }
 
     public static Stage getStagePrincipal() {

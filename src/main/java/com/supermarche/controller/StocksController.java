@@ -2,7 +2,7 @@ package com.supermarche.controller;
 
 import com.supermarche.config.ContexteApplication;
 import com.supermarche.model.MouvementStock;
-import com.supermarche.model.Produit;
+// import com.supermarche.model.Produit;
 import com.supermarche.model.Stock;
 import com.supermarche.util.DialogueUtil;
 import com.supermarche.util.FormatUtil;
@@ -16,7 +16,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 import java.util.List;
-import java.util.Optional;
+// import java.util.Optional;
 
 public class StocksController {
 

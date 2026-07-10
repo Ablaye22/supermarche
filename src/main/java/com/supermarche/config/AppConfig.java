@@ -17,7 +17,7 @@ public final class AppConfig {
 
     private final Map<String, Object> racine;
 
-    @SuppressWarnings("unchecked")
+    // @SuppressWarnings("unchecked")
     private AppConfig() {
         try (InputStream flux = AppConfig.class.getClassLoader()
                 .getResourceAsStream("config/application.yml")) {
@@ -119,5 +119,10 @@ public final class AppConfig {
 
     public String getDevise() {
         return sousSection("application").get("devise").toString();
+    }
+
+    public String getDossierPhotos() {
+        
+        return  "/home/sow/projects/supermarche-app/supermarche/src/main/resources/images/produits" ;
     }
 }

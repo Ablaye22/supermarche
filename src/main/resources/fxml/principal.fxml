@@ -5,34 +5,24 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Region?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.supermarche.controller.PrincipalController">
 
-    <left>
+    <top>
         <VBox styleClass="barre-laterale" fx:id="barreLaterale">
             <Label fx:id="labelTitreApp" text="Supermarche" styleClass="label-titre-app"/>
             <Label fx:id="labelUtilisateurConnecte" styleClass="label-utilisateur" text="Connecte en tant que..."/>
-
-            <Button fx:id="boutonTableauDeBord" text="Tableau de bord" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirTableauDeBord"/>
-            <Button fx:id="boutonCaisse" text="Caisse" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirCaisse"/>
-            <Button fx:id="boutonProduits" text="Produits" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirProduits"/>
-            <Button fx:id="boutonStocks" text="Stocks" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirStocks"/>
-            <Button fx:id="boutonFournisseurs" text="Fournisseurs" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirFournisseurs"/>
-            <Button fx:id="boutonClients" text="Clients" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirClients"/>
-            <Button fx:id="boutonRapports" text="Rapports" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirRapports"/>
-            <Button fx:id="boutonUtilisateurs" text="Utilisateurs" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirUtilisateurs"/>
-            <Button fx:id="boutonJournal" text="Journal d'audit" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirJournal"/>
-
-            <VBox VBox.vgrow="ALWAYS"/>
-
-            <Button fx:id="boutonDeconnexion" text="Se deconnecter" styleClass="bouton-nav" maxWidth="Infinity" onAction="#seDeconnecter">
-                <VBox.margin>
-                    <Insets bottom="20"/>
-                </VBox.margin>
-            </Button>
+            <!-- <Button fx:id="boutonCaisse" text="Caisse" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirCaisse"/> -->
+                  <VBox VBox.vgrow="ALWAYS"/>
+              <Button fx:id="boutonReduireMenu" text="☰" styleClass="bouton-secondaire"
+                                onAction="#basculerMenuReduit"
+                                style="-fx-font-size: 16px; -fx-padding: 6px 12px;"/>
         </VBox>
-    </left>
+    </top>
 
     <center>
         <VBox fx:id="zoneContenu" style="-fx-background-color: #F4F6F8;">
@@ -41,5 +31,102 @@
             </padding>
         </VBox>
     </center>
+
+    <left>
+       <VBox fx:id="menuLateral" prefWidth="250" fillWidth="true" spacing="20" styleClass="menu-lateral">
+            <Button fx:id="boutonTableauDeBord" text="Vente" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirTableauDeBord">
+            <graphic>
+                    <ImageView fitWidth="20" fitHeight="20">
+                        <image>
+                            <Image url="@images/slogan/ventes.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="boutonProduits" text="Produits" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirProduits">
+                <graphic>
+                    <ImageView fitWidth="20" fitHeight="20">
+                        <image>
+                            <Image url="@images/slogan/produits.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="boutonStocks" text="Stocks" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirStocks">
+            <graphic>
+                    <ImageView fitWidth="20" fitHeight="20">
+                        <image>
+                            <Image url="@images/slogan/stocks.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="boutonFournisseurs" text="Fournisseurs" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirFournisseurs">
+            <graphic>
+                    <ImageView fitWidth="20" fitHeight="20">
+                        <image>
+                            <Image url="@images/slogan/fournisseurs.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="boutonClients" text="Clients" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirClients">
+            <graphic>
+                    <ImageView fitWidth="20" fitHeight="20">
+                        <image>
+                            <Image url="@images/slogan/clients.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="boutonRapports" text="Rapports" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirRapports">
+            <graphic>
+                    <ImageView fitWidth="20" fitHeight="20">
+                        <image>
+                            <Image url="@images/slogan/rapports.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="boutonUtilisateurs" text="Utilisateurs" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirUtilisateurs">
+            <graphic>
+                    <ImageView fitWidth="20" fitHeight="20">
+                        <image>
+                            <Image url="@images/slogan/utilisateurs.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="boutonPlanning" text="planning" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirPlanning">
+            <graphic>
+                    <ImageView fitWidth="20" fitHeight="20">
+                        <image>
+                            <Image url="@images/slogan/planning.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="boutonJournal" text="Journal d'audit" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirJournal">
+            <graphic>
+                    <ImageView fitWidth="20" fitHeight="20">
+                        <image>
+                            <Image url="@images/slogan/journal.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="boutonActivitesJournalier" text="Activites Journalier" styleClass="bouton-nav" maxWidth="Infinity" onAction="#ouvrirActivitesJournalier">
+            <graphic>
+                    <ImageView fitWidth="20" fitHeight="20">
+                        <image>
+                            <Image url="@images/slogan/activites.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Region VBox.vgrow="ALWAYS"/>
+             <Button fx:id="boutonDeconnexion" text="Se deconnecter" onAction="#seDeconnecter" styleClass="bouton-danger" maxWidth="Infinity"/>
+       </VBox>
+    </left>
 
 </BorderPane>

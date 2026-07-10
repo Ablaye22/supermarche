@@ -23,3 +23,4 @@ security:
 application:
   nomEntreprise: "Mon Supermarche"
   devise: "EUR"
+  dossierPhotos: "/home/sow/supermarche/images/produits"

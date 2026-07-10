@@ -62,6 +62,24 @@ public class UtilisateurService {
         return cree;
     }
 
+    public Utilisateur modifierUtilisateur(Utilisateur utilisateur, CodeRole codeRole){
+        authService.exigerPermission("UTILISATEUR_GERER");
+
+        if (utilisateur.getNomUtilisateur() == null || utilisateur.getNomUtilisateur().isBlank()) {
+            throw new IllegalArgumentException("Le nom d'utilisateur est obligatoire.");
+        }
+
+        Role role = roleDao.trouverParCode(codeRole).orElseThrow(() -> new SupermarcheException("Role inconnu : " + codeRole));
+
+        utilisateur.setRole(role);
+        utilisateur.setActif(true);
+
+        Utilisateur cree = utilisateurDao.modifier(utilisateur);
+        auditService.enregistrer(idUtilisateurConnecte(), "UTILISATEUR_MODIFIER", "utilisateurs",
+                cree.getId().longValue(), "Role : " + codeRole);
+        return cree;
+    }
+
     public void activerOuDesactiver(int idUtilisateur, boolean actif) {
         authService.exigerPermission("UTILISATEUR_GERER");
         utilisateurDao.definirActif(idUtilisateur, actif);

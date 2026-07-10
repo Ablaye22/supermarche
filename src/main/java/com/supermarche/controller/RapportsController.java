@@ -64,21 +64,27 @@ public class RapportsController {
             return;
         }
 
-        LocalDateTime debutDateTime = LocalDateTime.of(debut, LocalTime.MIN);
-        LocalDateTime finDateTime = LocalDateTime.of(fin, LocalTime.MAX);
+        try {
+            LocalDateTime debutDateTime = LocalDateTime.of(debut, LocalTime.MIN);
+            LocalDateTime finDateTime = LocalDateTime.of(fin, LocalTime.MAX);
 
-        RapportService rapportService = ContexteApplication.getInstance().getRapportService();
+            RapportService rapportService = ContexteApplication.getInstance().getRapportService();
 
-        RapportService.SyntheseVentes synthese = rapportService.syntheseVentes(debutDateTime, finDateTime);
-        labelCaTtc.setText(FormatUtil.montant(synthese.chiffreAffairesTtc()));
-        labelCaHt.setText(FormatUtil.montant(synthese.chiffreAffairesHt()));
-        labelTva.setText(FormatUtil.montant(synthese.totalTva()));
-        labelNbVentes.setText(String.valueOf(synthese.nombreVentes()));
+            RapportService.SyntheseVentes synthese = rapportService.syntheseVentes(debutDateTime, finDateTime);
+            labelCaTtc.setText(FormatUtil.montant(synthese.chiffreAffairesTtc()));
+            labelCaHt.setText(FormatUtil.montant(synthese.chiffreAffairesHt()));
+            labelTva.setText(FormatUtil.montant(synthese.totalTva()));
+            labelNbVentes.setText(String.valueOf(synthese.nombreVentes()));
 
-        List<RapportService.VentilationParJour> parJour = rapportService.ventesParJour(debutDateTime, finDateTime);
-        tableVentesParJour.setItems(FXCollections.observableArrayList(parJour));
+            List<RapportService.VentilationParJour> parJour = rapportService.ventesParJour(debutDateTime, finDateTime);
+            tableVentesParJour.setItems(FXCollections.observableArrayList(parJour));
 
-        List<RapportService.ProduitVendu> topProduits = rapportService.meilleuresVentes(debutDateTime, finDateTime, 20);
-        tableTopProduits.setItems(FXCollections.observableArrayList(topProduits));
+            List<RapportService.ProduitVendu> topProduits = rapportService.meilleuresVentes(debutDateTime, finDateTime, 20);
+            tableTopProduits.setItems(FXCollections.observableArrayList(topProduits));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogueUtil.afficherErreur("Erreur", "Impossible de generer le rapport : " + e.getMessage());
+        }
     }
 }

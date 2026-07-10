@@ -45,18 +45,17 @@
 
 .bouton-nav {
     -fx-background-color: transparent;
-    -fx-text-fill: #C7D3DD;
-    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
     -fx-alignment: CENTER_LEFT;
-    -fx-padding: 12px 20px;
-    -fx-pref-width: 220px;
-    -fx-background-radius: 0;
-    -fx-cursor: hand;
+    -fx-content-display: LEFT;
+    -fx-graphic-text-gap: 12;
+    -fx-padding: 12 15;
 }
 
 .bouton-nav:hover {
-    -fx-background-color: #28394F;
-    -fx-text-fill: white;
+    -fx-background-color: #1f00ab;
+    -fx-background-radius: 8;
 }
 
 .bouton-nav-actif {
@@ -64,6 +63,13 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
+/* --------------------------menu laterale ---------------------- */
+.menu-lateral {
+    -fx-background-color: #0a0082;
+    -fx-padding: 5;
+    -fx-pref-width: 350;
+}
+
 
 /* ----------------------- En-tetes de page ----------------------- */
 
@@ -104,6 +110,7 @@
     -fx-background-color: #2E6F95;
     -fx-text-fill: white;
     -fx-font-weight: bold;
+    -fx-font-size: 20px;
     -fx-background-radius: 6px;
     -fx-padding: 10px 20px;
     -fx-cursor: hand;
@@ -121,11 +128,31 @@
     -fx-background-color: rgb(4, 193, 240);
     -fx-text-fill: #2E6F95;
     -fx-border-color: #2E6F95;
+    -fx-font-weight:bold;
+    -fx-font-size: 20px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+}
+.bouton-pave-numerique{
+    -fx-background-color: rgb(4, 193, 240);
+    -fx-text-fill: #040404;
+    -fx-border-color: #2E6F95;
+    -fx-font-weight:bold;
     -fx-font-size: 45px;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
     -fx-padding: 9px 19px;
     -fx-cursor: hand;
+
+}
+.bouton-pave-numerique:hover{
+    -fx-background-color: white;
+    -fx-text-fill: black;   
+}
+.bouton-fonction{
+    -fx-font-size: 20px;
 }
 
 .bouton-secondaire:hover {
@@ -136,7 +163,7 @@
     -fx-background-color: #B23A3A;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-font-size:30px;
+    -fx-font-size:20px;
     -fx-background-radius: 6px;
     -fx-padding: 10px 20px;
     -fx-cursor: hand;
@@ -149,6 +176,7 @@
 .bouton-succes {
     -fx-background-color: #2E7D52;
     -fx-text-fill: white;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-background-radius: 6px;
     -fx-padding: 10px 20px;
@@ -266,4 +294,34 @@
     -fx-font-weight: bold;
     -fx-text-fill: #1B2A41;
     -fx-padding: 0 0 8px 0;
+}
+
+
+/* ============================================================
+   Taille des onglets de sous-categories (ecran Caisse)
+   
+   ============================================================ */
+
+/* Onglets plus grands, plus faciles a toucher sur un ecran de caisse */
+.onglets-categories .tab {
+    -fx-padding: 12 28 12 28;      /* hauteur/largeur de chaque onglet */
+    -fx-background-radius: 6 6 0 0;
+}
+
+.onglets-categories .tab-label {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* Optionnel : agrandir aussi la zone d'en-tete globale du TabPane */
+.onglets-categories .tab-header-area {
+    -fx-padding: 4 0 0 0;
+}
+
+/* Optionnel : mettre en evidence l'onglet actuellement selectionne */
+.onglets-categories .tab:selected {
+    -fx-background-color: #2E6F95;
+}
+.onglets-categories .tab:selected .tab-label {
+    -fx-text-fill: white;
 }
