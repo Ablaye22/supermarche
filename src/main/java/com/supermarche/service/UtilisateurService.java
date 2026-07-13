@@ -94,6 +94,13 @@ public class UtilisateurService {
                 "utilisateurs", (long) idUtilisateur, null);
     }
 
+    public void changerMotDePasse(int idUtilisateur){
+        authService.exigerPermission("UTILISATEUR_GERER");
+        utilisateurDao.changerMotDePasse(idUtilisateur,PasswordHasher.hacher("000"));
+        auditService.enregistrer(idUtilisateurConnecte(), "MOT_DE_PASSE_CHANGER",
+                "utilisateurs", (long) idUtilisateur, null);
+    }
+
     public List<Utilisateur> listerTous() {
         authService.exigerPermission("UTILISATEUR_GERER");
         return utilisateurDao.listerTous();

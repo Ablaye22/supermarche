@@ -13,6 +13,7 @@ import com.supermarche.model.Produit;
 import com.supermarche.model.SessionCaisse;
 import com.supermarche.model.Vente;
 import com.supermarche.util.DialogueUtil;
+import com.supermarche.util.TicketPdfExporter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -31,7 +32,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import java.awt.Toolkit;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -45,7 +45,6 @@ import javafx.util.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 
@@ -57,24 +56,16 @@ public class CaisseController {
     @FXML private TextField champFondOuverture;
     @FXML private Button boutonOuvrirSession;
     @FXML private Button boutonFermerSession;
-
-    // Bascule entre les deux modes
     @FXML private Button boutonModePave;
     @FXML private Button boutonModeCategories;
-
-    // Panneau pave numerique
     @FXML private VBox panneauPave;
     @FXML private Label labelAfficheurPave;
     @FXML private Label labelDernierProduitAjoute;
-
-    // Panneau categories
     @FXML private VBox panneauCategories;
     @FXML private FlowPane conteneurBoutonsCategories;
     @FXML private Label labelCategorieSelectionnee;
     @FXML private TabPane tabsSousCategories;
     @FXML private FlowPane grilleProduitsCategorie;
-
-    // Panier et paiement (communs aux deux modes)
     @FXML private TableView<LignePanier> tablePanier;
     @FXML private TableColumn<LignePanier, String> colPanierDesignation;
     @FXML private TableColumn<LignePanier, Number> colPanierQuantite;
@@ -104,11 +95,6 @@ public class CaisseController {
     public void initialize() {
         demarrerHorloge();
         configurerColonnes();
-
-        // Les appels DB ci-dessous ne doivent jamais empecher le reste de
-        // l'ecran de se charger : une base non disponible ou une table vide
-        // ne doit pas planter tout le FXMLLoader.load(). On isole chaque
-        // etape a risque avec un try/catch qui affiche l'erreur reelle.
         try {
             chargerCaissesDisponibles();
         } catch (Exception e) {
@@ -161,10 +147,6 @@ public class CaisseController {
         timeline.play();
     }
 
-    // ------------------------------------------------------------------
-    // Bascule entre le mode pave numerique et le mode categories
-    // ------------------------------------------------------------------
-
     @FXML
     private void activerModePave() {
         panneauPave.setVisible(true);
@@ -189,16 +171,6 @@ public class CaisseController {
         boutonModePave.getStyleClass().add("bouton-secondaire");
     }
 
-    // ------------------------------------------------------------------
-    // Panneau categories : chargement des boutons et de la grille produits
-    // ------------------------------------------------------------------
-
-    /**
-     * Charge les boutons de categories : seules les categories "de tete"
-     * (sans parent, id_sous_categorie == null) sont affichees dans la
-     * barre. Les categories enfants apparaissent en drill-down quand on
-     * clique sur leur parent (voir afficherProduitsCategorie).
-     */
     private void chargerBoutonsCategories() {
         toutesLesCategories = ContexteApplication.getInstance()
                 .getProduitService().listerCategories();
@@ -206,7 +178,7 @@ public class CaisseController {
 
         for (Categorie categorie : toutesLesCategories) {
             if (categorie.getIdSousCategorie() != null) {
-                continue; // ce n'est pas une categorie de tete, elle apparaitra en drill-down
+                continue;
             }
             Button bouton = new Button(categorie.getNom());
             bouton.getStyleClass().add("bouton-secondaire");
@@ -215,13 +187,6 @@ public class CaisseController {
         }
     }
 
-    /**
-     * Si la categorie cliquee a des enfants, on les presente sous forme
-     * d'onglets (plus un onglet "Tous" pour les produits restes rattaches
-     * directement au parent, ex: anciens produits "Fruits et legumes" pas
-     * encore reclasses). Sinon, pas d'onglets : on affiche directement les
-     * produits de la categorie.
-     */
     private void afficherProduitsCategorie(Categorie categorie) {
         labelCategorieSelectionnee.setText(categorie.getNom());
 
@@ -238,14 +203,6 @@ public class CaisseController {
             return;
         }
 
-        Tab ongletTous = new Tab("Tous");
-        ongletTous.setOnSelectionChanged(e -> {
-            if (ongletTous.isSelected()) {
-                afficherProduitsDeCategorie(categorie);
-            }
-        });
-        tabsSousCategories.getTabs().add(ongletTous);
-
         for (Categorie enfant : enfants) {
             Tab onglet = new Tab(enfant.getNom());
             onglet.setOnSelectionChanged(e -> {
@@ -261,7 +218,6 @@ public class CaisseController {
         tabsSousCategories.getSelectionModel().selectFirst();
     }
 
-    /** Affiche les produits d'une categorie (feuille ou parente) dans la grille. */
     private void afficherProduitsDeCategorie(Categorie categorie) {
         grilleProduitsCategorie.getChildren().clear();
 
@@ -276,16 +232,11 @@ public class CaisseController {
         }
     }
 
-    /**
-     * Cree une carte visuelle pour un produit : photo (ou icone par
-     * defaut si le fichier est absent) + nom + prix. Un clic ajoute le
-     * produit directement au panier avec une quantite de 1.
-     */
     private VBox creerCarteProduit(Produit produit, String dossierPhotos) {
         VBox carte = new VBox(6);
         carte.setAlignment(Pos.CENTER);
         carte.setPrefWidth(170);
-        carte.setPrefHeight(170);
+        carte.setPrefHeight(180);
         carte.setStyle("""
                 -fx-background-color: white;
                 -fx-background-radius: 8px;
@@ -309,7 +260,6 @@ public class CaisseController {
                 imageView.setImage(null);
             }
         }
-        // Si pas de photo, on affiche juste le nom et le prix sans planter.
 
         Label labelNom = new Label(produit.getDesignation());
         labelNom.setWrapText(true);
@@ -323,8 +273,6 @@ public class CaisseController {
         labelPrix.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #2E6F95;");
 
         carte.getChildren().addAll(imageView, labelNom, labelPrix, labelPLU);
-
-        // Survol : legerement surligne
         carte.setOnMouseEntered(e -> carte.setStyle("""
                 -fx-background-color: #EAF2F7;
                 -fx-background-radius: 8px;
@@ -339,7 +287,6 @@ public class CaisseController {
                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 4, 0, 0, 2);
                 -fx-cursor: hand;
                 """));
-
         carte.setOnMouseClicked(e -> {
             if (sessionOuverte == null) {
                 DialogueUtil.afficherAvertissement("Session requise",
@@ -355,10 +302,6 @@ public class CaisseController {
         return carte;
     }
 
-    // ------------------------------------------------------------------
-    // Pave numerique
-    // ------------------------------------------------------------------
-
     @FXML
     private void saisirChiffre(javafx.event.ActionEvent evenement) {
         Button bouton = (Button) evenement.getSource();
@@ -369,7 +312,6 @@ public class CaisseController {
         rafraichirAfficheurPave();
     }
 
-    /** Bouton "00" : ajoute deux zeros d'un coup (pratique pour les centimes). */
     @FXML
     private void saisirDoubleZero() {
         if (saisieCourante.length() <= 11) {
@@ -378,12 +320,6 @@ public class CaisseController {
         rafraichirAfficheurPave();
     }
 
-    /**
-     * Bouton "." : ajoute une virgule decimale pour les quantites au poids
-     * (ex: 1.5 kg). N'est utilisable que dans le mode "Appliquer quantite",
-     * pas pour un code-barres (un code-barres ne contient jamais de virgule).
-     * On empeche d'en saisir deux.
-     */
     @FXML
     private void saisirVirgule() {
         if (!saisieCourante.toString().contains(".") && saisieCourante.length() < 12) {
@@ -479,8 +415,6 @@ public class CaisseController {
             return;
         }
 
-        // On accepte les quantites decimales (ex: 1.5 kg) via BigDecimal,
-        // puis on verifie quand meme que c'est > 0.
         BigDecimal quantiteSaisie;
         try {
             quantiteSaisie = new BigDecimal(saisie);
@@ -497,26 +431,16 @@ public class CaisseController {
         int idDepot = ContexteApplication.getInstance().getIdDepotCourant();
         int stockDisponible = ContexteApplication.getInstance().getStockService()
                 .lireQuantite(derniereLigne.getProduit().getId(), idDepot);
-
-        // Pour la verification du stock on compare en entier (arrondi superieur)
-        // afin de ne pas vendre plus que disponible meme pour les produits au poids.
         if (quantiteSaisie.setScale(0, java.math.RoundingMode.CEILING).intValue() > stockDisponible) {
             DialogueUtil.afficherAvertissement("Stock insuffisant",
                     "Stock disponible : " + stockDisponible);
             return;
         }
-
-        // LignePanier stocke un int pour la quantite (produits a l'unite) ;
-        // pour les produits au poids on arrondit au superieur.
         derniereLigne.setQuantite(quantiteSaisie.setScale(0, java.math.RoundingMode.CEILING).intValue());
         tablePanier.refresh();
         rafraichirTotal();
         effacerSaisie();
     }
-
-    // ------------------------------------------------------------------
-    // Panier (commun aux deux modes)
-    // ------------------------------------------------------------------
 
     private void ajouterProduitAuPanier(Produit produit, int quantiteAjoutee) {
         int idDepot = ContexteApplication.getInstance().getIdDepotCourant();
@@ -539,7 +463,7 @@ public class CaisseController {
         } else {
             panier.add(new LignePanier(produit, quantiteAjoutee));
         }
-        Toolkit.getDefaultToolkit().beep();
+        Toolkit.getDefaultToolkit().beep();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
         rafraichirTotal();
     }
 
@@ -615,6 +539,15 @@ public class CaisseController {
                     BigDecimal.valueOf(lp.getQuantite()), p.getPrixVenteTtc(), p.getTauxTva()));
         }
         List<Paiement> paiements = List.of(new Paiement(comboModePaiement.getValue(), montantPaye));
+        List<TicketPdfExporter.LigneTicket> lignesTicket = new ArrayList<>();
+        for (LignePanier lp : panier) {
+            lignesTicket.add(new TicketPdfExporter.LigneTicket(
+                    lp.getProduit().getDesignation(),
+                    BigDecimal.valueOf(lp.getQuantite()),
+                    lp.getProduit().getPrixVenteTtc(),
+                    lp.getTotalLigne()));
+        }
+
         try {
             Vente vente = ContexteApplication.getInstance().getVenteService().enregistrerVente(
                     sessionOuverte.getId(), ContexteApplication.getInstance().getIdDepotCourant(),
@@ -626,6 +559,9 @@ public class CaisseController {
                     "Ticket " + vente.getNumeroTicket()
                     + "\nTotal : " + com.supermarche.util.FormatUtil.montant(vente.getTotalTtc())
                     + msgMonnaie);
+
+            genererEtOuvrirTicket(vente, lignesTicket, monnaie);
+
             panier.clear();
             champCarteFidelite.clear();
             champMontantPaiement.clear();
@@ -638,9 +574,47 @@ public class CaisseController {
         }
     }
 
-    // ------------------------------------------------------------------
-    // Session de caisse
-    // ------------------------------------------------------------------
+    private void genererEtOuvrirTicket(Vente vente, List<TicketPdfExporter.LigneTicket> lignesTicket, BigDecimal monnaie) {
+        try {
+            File dossierParent = new File(AppConfig.getInstance().getDossierPhotos()).getParentFile();
+            File dossierTickets = (dossierParent != null)
+                    ? new File(dossierParent, "tickets")
+                    : new File("tickets");
+            if (!dossierTickets.exists()) {
+                dossierTickets.mkdirs();
+            }
+
+            String numeroFichier = vente.getNumeroTicket().replaceAll("[^a-zA-Z0-9_-]", "_");
+            File fichierTicket = new File(dossierTickets, "ticket_" + numeroFichier + ".pdf");
+
+            Caisse caisse = comboCaisse.getValue();
+            String nomCaisse = (caisse != null) ? caisse.getNom() : "";
+            String nomCaissier = sessionOuverte.getNomUtilisateur();
+
+            TicketPdfExporter.exporter(
+                    fichierTicket,
+                    nomCaisse,
+                    nomCaissier,
+                    vente.getNumeroTicket(),
+                    java.time.LocalDateTime.now(),
+                    lignesTicket,
+                    vente.getTotalTtc(),
+                    String.valueOf(comboModePaiement.getValue()),
+                    champMontantPaiement.getText() == null || champMontantPaiement.getText().isBlank()
+                            ? vente.getTotalTtc()
+                            : new BigDecimal(champMontantPaiement.getText().replace(",", ".")),
+                    monnaie);
+
+            if (java.awt.Desktop.isDesktopSupported()
+                    && java.awt.Desktop.getDesktop().isSupported(java.awt.Desktop.Action.OPEN)) {
+                java.awt.Desktop.getDesktop().open(fichierTicket);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogueUtil.afficherAvertissement("Ticket non genere",
+                    "La vente a bien ete enregistree, mais le ticket PDF n'a pas pu etre genere : " + e.getMessage());
+        }
+    }
 
     @FXML
     private void ouvrirSession() {

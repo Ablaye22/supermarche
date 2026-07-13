@@ -11,33 +11,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-/**
- * Gere les quantites en stock et leur historique de mouvements.
- *
- * IMPORTANT - Gestion de la concurrence multi-caisses :
- * Toutes les methodes qui modifient une quantite de stock utilisent
- * "SELECT ... FOR UPDATE" pour verrouiller la ligne avant de la modifier.
- * Sur un reseau local avec plusieurs caisses actives simultanement, deux
- * ventes du meme produit pourraient sinon lire la meme quantite initiale
- * et la decrementer deux fois en se basant sur une valeur perimee
- * (probleme classique de "lost update"). Le verrou pessimiste, combine a
- * une transaction courte, empeche ce scenario sans bloquer longtemps les
- * autres caisses qui vendent des produits differents.
- */
+
 public class StockDao {
 
     /**
-     * Decremente le stock pour une vente. Doit etre appele a l'interieur
-     * d'une transaction plus large (voir VenteService), avec la meme
-     * Connection passee en parametre pour que le verrou et la mise a jour
-     * fassent partie de la meme transaction.
-     *
      * @throws StockInsuffisantException si la quantite demandee n'est pas disponible
      */
     public void decrementerPourVente(Connection cnx, int idProduit, int idDepot, int quantite,
@@ -54,7 +35,6 @@ public class StockDao {
                 nouvelleQuantite, reference, idUtilisateur, null);
     }
 
-    /** Annule une vente : remet la quantite vendue dans le stock. */
     public void reintegrerApresAnnulation(Connection cnx, int idProduit, int idDepot, int quantite,
                                            Integer idUtilisateur, String reference) throws SQLException {
         int quantiteActuelle = lireEtVerrouiller(cnx, idProduit, idDepot);
@@ -64,7 +44,6 @@ public class StockDao {
                 nouvelleQuantite, reference, idUtilisateur, "Annulation/remboursement de vente");
     }
 
-    /** Entree de stock (reception d'une commande fournisseur). Gere sa propre transaction. */
     public void enregistrerEntree(int idProduit, int idDepot, int quantite, Integer idUtilisateur, String reference) {
         try (Connection cnx = DatabaseConfig.getConnection()) {
             cnx.setAutoCommit(false);
@@ -80,7 +59,6 @@ public class StockDao {
         }
     }
 
-    /** Variante utilisable dans une transaction externe plus large (ex: reception de commande fournisseur). */
     public void enregistrerEntree(Connection cnx, int idProduit, int idDepot, int quantite,
                                    Integer idUtilisateur, String reference) throws SQLException {
         int quantiteActuelle = lireEtVerrouiller(cnx, idProduit, idDepot);
@@ -90,7 +68,6 @@ public class StockDao {
                 nouvelleQuantite, reference, idUtilisateur, null);
     }
 
-    /** Ajustement manuel (inventaire, casse, perte...). Gere sa propre transaction. */
     public void ajusterStock(int idProduit, int idDepot, int nouvelleQuantite, Integer idUtilisateur, String commentaire) {
         try (Connection cnx = DatabaseConfig.getConnection()) {
             cnx.setAutoCommit(false);
@@ -110,7 +87,6 @@ public class StockDao {
         }
     }
 
-    /** Lit la quantite actuelle en verrouillant la ligne (FOR UPDATE). Cree la ligne a 0 si absente. */
     private int lireEtVerrouiller(Connection cnx, int idProduit, int idDepot) throws SQLException {
         String sqlLire = "SELECT quantite FROM stocks WHERE id_produit = ? AND id_depot = ? FOR UPDATE";
         try (PreparedStatement ps = cnx.prepareStatement(sqlLire)) {
@@ -122,8 +98,6 @@ public class StockDao {
                 }
             }
         }
-        // Aucune ligne de stock pour ce produit/depot : on la cree a 0 avant de continuer,
-        // ce qui evite un crash sur un produit jamais encore stocke dans ce depot.
         String sqlCreer = "INSERT INTO stocks (id_produit, id_depot, quantite) VALUES (?, ?, 0)";
         try (PreparedStatement ps = cnx.prepareStatement(sqlCreer)) {
             ps.setInt(1, idProduit);

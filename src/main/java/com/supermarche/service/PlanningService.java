@@ -10,7 +10,6 @@ public class PlanningService {
 
     private final PlanningDao planningDao = new PlanningDao();
     private final AuthService authService;
-    private final AuditService auditService = new AuditService();
 
     public PlanningService(AuthService authService){
         this.authService = authService;
@@ -116,8 +115,5 @@ public class PlanningService {
                     "Veuillez sélectionner un statut.");
         }
 
-    }
-    private Integer idUtilisateurConnecte() {
-        return authService.getUtilisateurConnecte() != null ? authService.getUtilisateurConnecte().getId() : null;
     }
 }

@@ -228,8 +228,6 @@ public class PlanningController {
         }
     }
 
-    // ======================== VUE HEBDOMADAIRE ========================
-
     private void initialiserVueHebdomadaire() {
 
         colonnesJours = List.of(

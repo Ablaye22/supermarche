@@ -5,9 +5,6 @@ import com.supermarche.model.Employe;
 import com.supermarche.model.Role;
 import com.supermarche.model.Utilisateur;
 import com.supermarche.util.DialogueUtil;
-import com.supermarche.util.FormatUtil;
-
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -19,7 +16,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -190,7 +186,6 @@ public class UtilisateursController {
         champEmail.setText(employe.getEmail());
         champNomUtilisateur.setText(utilisateur.getNomUtilisateur());
         creerModifier.setText("Modifier le compte");
-        // Pour des raisons de sécurité on ne recharge jamais le mot de passe.
         champMotDePasse.setText("***************");
         champMotDePasse.setDisable(true);
         comboRole.getSelectionModel().select(utilisateur.getRole());
@@ -241,6 +236,21 @@ public class UtilisateursController {
         try {
             ContexteApplication.getInstance().getUtilisateurService().deverrouillerCompte(selectionne.getId());
             DialogueUtil.afficherInfo("Compte deverrouille", "Le compte a ete deverrouille.");
+            chargerListe();
+        } catch (Exception e) {
+            DialogueUtil.afficherErreur("Erreur", e.getMessage());
+        }
+    }
+    @FXML
+    private void reinitialiserPassword(){
+        Utilisateur selectionne = tableUtilisateurs.getSelectionModel().getSelectedItem();
+        if (selectionne == null) {
+            DialogueUtil.afficherAvertissement("Aucune selection", "Selectionnez un utilisateur dans la liste.");
+            return;
+        }
+        try {
+            ContexteApplication.getInstance().getUtilisateurService().changerMotDePasse(selectionne.getId());
+            DialogueUtil.afficherInfo("Réinitialisation de Mot de passe", "Le Mot de passe a été réinitialiser avec succès");
             chargerListe();
         } catch (Exception e) {
             DialogueUtil.afficherErreur("Erreur", e.getMessage());

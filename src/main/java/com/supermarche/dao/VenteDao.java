@@ -6,8 +6,6 @@ import com.supermarche.model.ModePaiement;
 import com.supermarche.model.Paiement;
 import com.supermarche.model.StatutVente;
 import com.supermarche.model.Vente;
-
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,14 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Les methodes de creation/modification de vente prennent une Connection
- * en parametre : elles sont conçues pour s'executer DANS la transaction
- * geree par VenteService, qui orchestre aussi la decrementation du stock.
- * Une vente et la sortie de stock associee doivent reussir ou echouer
- * ensemble (atomicite) : on ne veut jamais facturer un produit qui n'a
- * pas pu etre retire du stock, ni l'inverse.
- */
 public class VenteDao {
 
     public Vente creerVenteEtLignes(Connection cnx, Vente vente) throws SQLException {

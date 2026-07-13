@@ -5,7 +5,6 @@ import com.supermarche.exception.AccesDonneesException;
 import com.supermarche.model.Employe;
 import com.supermarche.model.Role;
 import com.supermarche.model.Utilisateur;
-
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;

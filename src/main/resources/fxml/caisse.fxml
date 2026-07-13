@@ -157,7 +157,7 @@
                         <VBox fx:id="panneauCategories" spacing="10" visible="false" managed="false">
                                 <FlowPane fx:id="conteneurBoutonsCategories" hgap="8" vgap="8"/>
                                         <Label fx:id="labelCategorieSelectionnee" text="Selectionnez une categorie" style="-fx-font-weight: bold; -fx-text-fill: #1B2A41;"/>
-                                <TabPane fx:id="tabsSousCategories" styleClass="onglets-categories" tabClosingPolicy="UNAVAILABLE" prefHeight="42" visible="false" managed="false"/>
+                                <TabPane fx:id="tabsSousCategories" styleClass="onglets-categories" tabClosingPolicy="UNAVAILABLE" prefHeight="42" minHeight="40" maxHeight="40" visible="false" managed="false"/>
                                 <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
                                          <content>
                                                 <VBox style="-fx-padding: 10 10 10 10;">
