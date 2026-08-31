@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.ScrollPane?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.supermarche.controller.ProduitsController" spacing="16">
+
+    <HBox alignment="CENTER_LEFT" spacing="12">
+        <Button text="&#8592; Retour au menu" styleClass="bouton-retour" onAction="#retourMenu"/>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <Label text="Produits" styleClass="titre-page"/>
+
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+
+        <VBox spacing="10" prefWidth="800" VBox.vgrow="ALWAYS">
+         <padding>
+                <Insets top="10" right="10" bottom="20" left="10"/>
+            </padding>
+            <HBox spacing="8">
+                <TextField fx:id="champRecherche" promptText="Rechercher un produit..." styleClass="champ-saisie" HBox.hgrow="ALWAYS"/>
+                <Button text="Rechercher" styleClass="bouton-secondaire" onAction="#rechercher"/>
+                <Button text="Nouveau produit" styleClass="bouton-principal" onAction="#nouveauProduit"/>
+            </HBox>
+            
+            <TableView fx:id="tableProduits" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colCodeBarre" text="Code-barre" prefWidth="110"/>
+                    <TableColumn fx:id="colDesignation" text="Designation" prefWidth="220"/>
+                    <TableColumn fx:id="colPrixAchat" text="Prix achat HT" prefWidth="100"/>
+                    <TableColumn fx:id="colPrixVente" text="Prix vente TTC" prefWidth="100"/>
+                    <TableColumn fx:id="colActif" text="Actif" prefWidth="60"/>
+                </columns>
+            </TableView>
+        </VBox>
+    <ScrollPane fitToWidth="true" pannable="true" VBox.vgrow="ALWAYS">
+
+     <content>
+        <VBox spacing="10" prefWidth="500" styleClass="carte">
+            <Label fx:id="labelTitreFormulaire" text="Nouveau produit" styleClass="label-section"/>
+            <VBox spacing="10" alignment="CENTER">
+            <StackPane prefWidth="180" prefHeight="180" style="-fx-border-color: gray; -fx-border-width: 1; -fx-background-color: white; -fx-border-radius: 20; -fx-padding: 5;">
+                <Label text="Aucune photo" fx:id="labelPhoto"/>
+                <ImageView fx:id="imageProduit" fitWidth="170" fitHeight="170" preserveRatio="true"/>
+            </StackPane>
+                <HBox spacing="10" alignment="CENTER">
+                    <Button text="Choisir une photo" onAction="#choisirPhoto"/>
+                    <Button text="Supprimer" onAction="#supprimerPhoto"/>
+                </HBox>
+            </VBox>
+            <Label text="Code-barre"/>
+            <TextField fx:id="champCodeBarre" styleClass="champ-saisie"/>
+             <Button text="Générer" onAction="#genererCodeBarre"/>
+
+            <Label text="Code PLU"/>
+            <TextField fx:id="champCodePLU" styleClass="champ-saisie"/>
+
+            <Label text="Designation"/>
+            <TextField fx:id="champDesignation" styleClass="champ-saisie"/>
+
+            <Label text="Description"/>
+            <TextArea fx:id="champDescription" styleClass="champ-saisie" prefRowCount="2" wrapText="true"/>
+
+            <HBox spacing="10">
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label text="Prix achat HT (€)"/>
+                    <TextField fx:id="champPrixAchat" styleClass="champ-saisie"/>
+                </VBox>
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label text="Prix vente TTC (€)"/>
+                    <TextField fx:id="champPrixVente" styleClass="champ-saisie"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="10">
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label text="Taux TVA (%)"/>
+                    <TextField fx:id="champTauxTva" styleClass="champ-saisie"/>
+                </VBox>
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label text="Seuil alerte stock"/>
+                    <TextField fx:id="champSeuilAlerte" styleClass="champ-saisie"/>
+                </VBox>
+            </HBox>
+
+            <Label text="Unite"/>
+            <ComboBox fx:id="comboUnite" maxWidth="Infinity"/>
+
+            <Label text="Catégorie"/>
+
+            <ComboBox fx:id="comboCategorie" maxWidth="Infinity"/>
+
+            <HBox spacing="10">
+                <Button text="Enregistrer" styleClass="bouton-principal" onAction="#enregistrerProduit" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button text="Desactiver" styleClass="bouton-danger" onAction="#desactiverProduit"/>
+            </HBox>
+            <Button text="Nouvelle fiche" styleClass="bouton-secondaire" onAction="#nouveauProduit" maxWidth="Infinity"/>
+            
+        </VBox>
+    </content>
+    </ScrollPane>
+</HBox>
+
+</VBox>

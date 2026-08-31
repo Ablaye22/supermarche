@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.supermarche.controller.PrelevementController" spacing="16">
+
+      <HBox alignment="CENTER_LEFT" spacing="12">
+        <Button text="&#8592; Retour au menu" styleClass="bouton-retour" onAction="#retourMenu"/>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <Label text="Prelevement" styleClass="titre-page"/>
+     <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <VBox styleClass="carte" prefWidth="500" VBox.vgrow="ALWAYS">
+                <Label text="Caissier en attente de prélevement" styleClass="label-section"/>
+                <TableView fx:id="tableCaissier" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colIdentifiant" text="identifiant" prefWidth="80"/>
+                        <TableColumn fx:id="colNom" text="Nom" prefWidth="120"/>
+                        <TableColumn fx:id="colPrenom" text="Prenom" prefWidth="120"/>
+                        <TableColumn fx:id="colStatus" text="Status" prefWidth="100"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <ScrollPane fitToWidth="true" pannable="true" VBox.vgrow="ALWAYS">
+
+        <content>
+            <VBox spacing="10" prefWidth="500" styleClass="carte">
+                <Label fx:id="labelTitreFormulaire" text="Encaissement" styleClass="label-section"/>
+
+                <Label text="Identifiant"/>
+                <TextField fx:id="identifiant" styleClass="champ-saisie"/>
+
+                <Label text="Nom"/>
+                <TextField fx:id="nom" styleClass="champ-saisie"/>
+
+                <Label text="Prénom"/>
+                <TextField fx:id="prenom" styleClass="champ-saisie"/>
+
+                <Label text="Montant encaissé"/>
+                <TextField fx:id="montantEncaisser" styleClass="champ-saisie"/>
+
+
+                <HBox spacing="10">
+                    <Button text="Valider" styleClass="bouton-principal" onAction="#encaissement" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                </HBox>
+                
+            </VBox>
+        </content>
+    </ScrollPane>
+    </HBox>
+</VBox>

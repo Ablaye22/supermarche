@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.supermarche.controller.StocksController" spacing="16">
+
+      <HBox alignment="CENTER_LEFT" spacing="12">
+        <Button text="&#8592; Retour au menu" styleClass="bouton-retour" onAction="#retourMenu"/>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <Label text="Stocks" styleClass="titre-page"/>
+    <Label text="Depot : Magasin principal" styleClass="sous-titre-page"/>
+
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+
+        <VBox spacing="10" prefWidth="650" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tableStocks" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colStockDesignation" text="Produit" prefWidth="320"/>
+                    <TableColumn fx:id="colStockQuantite" text="Quantite en stock" prefWidth="140"/>
+                    <TableColumn fx:id="colStockStatut" text="Statut" prefWidth="120"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <VBox spacing="10" prefWidth="380" styleClass="carte">
+            <Label text="Mouvement de stock" styleClass="label-section"/>
+            <Label text="Produit selectionne :"/>
+            <Label fx:id="labelProduitSelectionne" text="(aucun)" style="-fx-font-weight: bold;" wrapText="true"/>
+            <Label fx:id="labelQuantiteActuelle" text="Quantite actuelle : -"/>
+
+            <Label text="Entree de stock (reception)" styleClass="label-section"/>
+            <HBox spacing="8">
+                <TextField fx:id="champQuantiteEntree" promptText="Quantite" styleClass="champ-saisie" HBox.hgrow="ALWAYS"/>
+                <Button text="Ajouter" styleClass="bouton-succes" onAction="#enregistrerEntree"/>
+            </HBox>
+
+            <Label text="Ajustement d'inventaire" styleClass="label-section"/>
+            <HBox spacing="8">
+                <TextField fx:id="champNouvelleQuantite" promptText="Nouvelle quantite" styleClass="champ-saisie" HBox.hgrow="ALWAYS"/>
+                <Button text="Ajuster" styleClass="bouton-secondaire" onAction="#ajusterStock"/>
+            </HBox>
+            <TextArea fx:id="champCommentaireAjustement" promptText="Motif de l'ajustement (casse, perte, inventaire...)"
+                      styleClass="champ-saisie" prefRowCount="2" wrapText="true"/>
+
+            <Label text="Historique des mouvements" styleClass="label-section"/>
+            <TableView fx:id="tableHistorique" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colHistoDate" text="Date" prefWidth="120"/>
+                    <TableColumn fx:id="colHistoType" text="Type" prefWidth="90"/>
+                    <TableColumn fx:id="colHistoQuantite" text="Qte" prefWidth="60"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </HBox>
+
+</VBox>

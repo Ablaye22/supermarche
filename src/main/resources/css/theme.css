@@ -1,0 +1,439 @@
+/*
+ * Theme visuel de l'application.
+ * Palette sobre orientee usage professionnel repete (8h/jour pour un
+ * caissier) : contrastes nets pour la lisibilite rapide, une seule
+ * couleur d'accent reservee aux actions principales et aux alertes,
+ * pas de decoration qui distrairait d'une tache repetitive.
+ *
+ * Couleurs:
+ *   --bleu-nuit     #1B2A41  (barre laterale, en-tetes)
+ *   --bleu-accent   #2E6F95  (actions principales)
+ *   --vert-succes   #2E7D52  (validations, stock ok)
+ *   --orange-alerte #C77B26  (alertes stock, avertissements)
+ *   --rouge-erreur  #B23A3A  (erreurs, annulations)
+ *   --gris-fond     #F4F6F8  (fond general)
+ *   --gris-bordure  #D7DCE2
+ *   --blanc         #FFFFFF
+ */
+
+ .root {
+    /* Variables reutilisables : evite qu'une couleur hors palette
+       (ex: un indigo ou un violet de test) se glisse par erreur
+       dans une regle isolee. */
+    -bleu-nuit:      #1B2A41;
+    -bleu-nuit-clair: #24385A;
+    -bleu-accent:    #2E6F95;
+    -bleu-accent-survol: #275D7D;
+    -vert-succes:    #2E7D52;
+    -vert-succes-survol: #246741;
+    -orange-alerte:  #C77B26;
+    -rouge-erreur:   #B23A3A;
+    -rouge-erreur-survol: #962F2F;
+    -gris-fond:      #F4F6F8;
+    -gris-bordure:   #D7DCE2;
+    -gris-texte:     #5C6B7A;
+    -blanc:          #FFFFFF;
+
+    -police-ui:   "Segoe UI", "Helvetica Neue", sans-serif;
+    -police-code: "JetBrains Mono", "Consolas", "Courier New", monospace;
+
+    -fx-font-family: -police-ui;
+    -fx-font-size: 13px;
+    -fx-background-color: -gris-fond;
+}
+
+/* ----------------------- Barre laterale de navigation ----------------------- */
+
+.barre-laterale {
+    -fx-background-color: -bleu-nuit;
+    -fx-padding: 0;
+    -fx-min-width: 220px;
+}
+
+.barre-laterale .label-titre-app {
+    -fx-text-fill: -blanc;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 24px 20px 8px 20px;
+}
+
+.barre-laterale .label-utilisateur {
+    -fx-text-fill: #9FB3C8;
+    -fx-font-size: 12px;
+    -fx-padding: 0 20px 20px 20px;
+}
+
+.bouton-nav {
+    -fx-background-color: transparent;
+    -fx-text-fill: -blanc;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: 500;
+    -fx-alignment: CENTER;
+    -fx-content-display: TOP;
+    -fx-text-alignment: CENTER;
+    -fx-wrap-text: true;
+    -fx-graphic-text-gap: 6;
+    -fx-padding: 10 6 10 6;
+    -fx-min-height: 62px;
+    -fx-pref-height: 62px;
+}
+
+.bouton-nav:hover {
+    -fx-background-color: -bleu-nuit-clair;
+    -fx-background-radius: 8;
+}
+
+.bouton-nav-actif {
+    -fx-background-color: -bleu-accent;
+    -fx-text-fill: -blanc;
+    -fx-font-weight: bold;
+}
+
+/* --------------------------- menu lateral (conteneur) --------------------------- */
+
+.menu-lateral {
+    -fx-background-color: -bleu-nuit;
+    -fx-padding: 5;
+    /* Largeur alignee sur .barre-laterale : un seul conteneur decide
+       de la largeur du menu, plus de conflit entre les deux regles. */
+    -fx-min-width: 220px;
+}
+
+/* ----------------------- En-tetes de page ----------------------- */
+
+.titre-page {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -bleu-nuit;
+}
+
+.sous-titre-page {
+    -fx-font-size: 13px;
+    -fx-text-fill: -gris-texte;
+}
+
+/* ----------------------- Cartes / panneaux ----------------------- */
+
+.carte {
+    -fx-background-color: -blanc;
+    -fx-background-radius: 8px;
+    -fx-padding: 16px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
+}
+
+.carte-indicateur .valeur {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -bleu-nuit;
+}
+
+.carte-indicateur .libelle {
+    -fx-font-size: 12px;
+    -fx-text-fill: -gris-texte;
+}
+
+/* ----------------------- Boutons d'action ----------------------- */
+
+.bouton-principal {
+    -fx-background-color: -bleu-accent;
+    -fx-text-fill: -blanc;
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+}
+
+.bouton-principal:hover {
+    -fx-background-color: -bleu-accent-survol;
+}
+
+.bouton-principal:disabled {
+    -fx-opacity: 0.5;
+}
+
+/* Bouton secondaire = discret, comme documente en tete de fichier :
+   contour bleu accent, fond clair, texte bleu accent. Avant : fond
+   cyan vif rgb(4,193,240) qui rendait le texte illisible. */
+.bouton-secondaire {
+    -fx-background-color: -blanc;
+    -fx-text-fill: -bleu-accent;
+    -fx-border-color: -bleu-accent;
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+}
+
+.bouton-secondaire:hover {
+    -fx-background-color: #EAF2F7;
+}
+
+/* Pave numerique caisse : grande taille de police conservee (ecran
+   tactile, doit rester lisible/appuyable rapidement), mais couleur
+   ramenee dans la palette au lieu du cyan vif d'origine. */
+.bouton-pave-numerique {
+    -fx-background-color: -blanc;
+    -fx-text-fill: -bleu-nuit;
+    -fx-border-color: -gris-bordure;
+    -fx-font-weight: bold;
+    -fx-font-size: 45px;
+    -fx-font-family: -police-code;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 9px 19px;
+    -fx-cursor: hand;
+}
+
+.bouton-pave-numerique:hover {
+    -fx-background-color: #EAF2F7;
+    -fx-border-color: -bleu-accent;
+}
+
+.bouton-danger {
+    -fx-background-color: -rouge-erreur;
+    -fx-text-fill: -blanc;
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+}
+
+.bouton-danger:hover {
+    -fx-background-color: -rouge-erreur-survol;
+}
+
+.bouton-succes {
+    -fx-background-color: -vert-succes;
+    -fx-text-fill: -blanc;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+}
+
+.bouton-succes:hover {
+    -fx-background-color: -vert-succes-survol;
+}
+
+/* Boutons de fonction du pave (EAN / PLU / Quantite / Pack / Correction /
+   Retour) : une seule definition (l'ancien fichier la dupliquait, la
+   seconde ecrasant silencieusement la premiere avec des proprietes
+   -fx-height/-fx-width invalides en CSS JavaFX pour un Region). */
+.bouton-fonction {
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-font-size: 20px;
+    -fx-text-fill: -blanc;
+    -fx-background-color: #275D7D; 
+    -fx-text-fill: white;
+}
+.bouton-fonction-danger    { -fx-background-color: -rouge-erreur; }
+.bouton-fonction-info      { -fx-background-color: -bleu-accent; }
+.bouton-fonction-succes    { -fx-background-color: -vert-succes; }
+.bouton-fonction-attention { -fx-background-color: -orange-alerte; }
+
+/* ----------------------- Champs de saisie ----------------------- */
+
+.champ-saisie {
+    -fx-background-color: -blanc;
+    -fx-border-color: -gris-bordure;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 12px;
+}
+
+.champ-saisie:focused {
+    -fx-border-color: -bleu-accent;
+}
+
+.champ-erreur {
+    -fx-border-color: -rouge-erreur;
+}
+
+.message-erreur {
+    -fx-text-fill: -rouge-erreur;
+    -fx-font-size: 12px;
+}
+
+/* ----------------------- Etiquettes de statut ----------------------- */
+
+.badge {
+    -fx-padding: 3px 10px;
+    -fx-background-radius: 12px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.badge-succes {
+    -fx-background-color: #DCF0E3;
+    -fx-text-fill: -vert-succes;
+}
+
+.badge-alerte {
+    -fx-background-color: #FBE7D0;
+    -fx-text-fill: -orange-alerte;
+}
+
+.badge-erreur {
+    -fx-background-color: #F6DADA;
+    -fx-text-fill: -rouge-erreur;
+}
+
+.badge-neutre {
+    -fx-background-color: #E4E8EC;
+    -fx-text-fill: -gris-texte;
+}
+
+/* ----------------------- Tableaux ----------------------- */
+
+.table-view {
+    -fx-background-color: -blanc;
+    -fx-background-radius: 8px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #EDF0F3;
+    -fx-background-radius: 8px 8px 0 0;
+}
+
+.table-view .column-header-background .label {
+    -fx-text-fill: -gris-texte;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #FAFBFC;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #DCEBF2;
+}
+
+/* ----------------------- Panneau caisse (point de vente) ----------------------- */
+
+.panneau-ticket {
+    -fx-background-color: -blanc;
+    -fx-background-radius: 8px;
+}
+
+.ligne-ticket {
+    -fx-padding: 10px;
+    -fx-border-color: transparent transparent #EDF0F3 transparent;
+}
+
+/* Total du ticket : police monospace pour rappeler un afficheur de
+   caisse / un ticket imprime -- seul emprunt volontaire a une
+   esthetique "point de vente" dans une feuille par ailleurs sobre. */
+.total-ticket {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-font-family: -police-code;
+    -fx-text-fill: -bleu-nuit;
+}
+
+.label-section {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -bleu-nuit;
+    -fx-padding: 0 0 8px 0;
+}
+
+/* ============================================================
+   Ecran d'accueil (grille de tuiles) et bouton Retour
+   ============================================================ */
+
+.ecran-menu-accueil {
+    -fx-background-color: -gris-fond;
+}
+
+.entete-menu-accueil {
+    -fx-background-color: -bleu-nuit;
+}
+
+.label-titre-app-accueil {
+    -fx-text-fill: -blanc;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.label-utilisateur-accueil {
+    -fx-text-fill: #9FB3C8;
+    -fx-font-size: 12px;
+}
+
+.grille-menu-accueil {
+    -fx-alignment: CENTER;
+}
+
+.tuile-menu {
+    -fx-pref-width: 250px;
+    -fx-pref-height: 230px;
+    -fx-background-color: -blanc;
+    -fx-background-radius: 10px;
+    -fx-border-color: -gris-bordure;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
+    -fx-content-display: TOP;
+    -fx-alignment: CENTER;
+    -fx-graphic-text-gap: 10;
+    -fx-text-alignment: CENTER;
+    -fx-wrap-text: true;
+    -fx-font-size: 23px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -bleu-nuit;
+    -fx-cursor: hand;
+}
+
+.tuile-menu:hover {
+    -fx-border-color: -bleu-accent;
+    -fx-effect: dropshadow(gaussian, rgba(46,111,149,0.18), 10, 0, 0, 3);
+}
+
+.bouton-retour {
+    -fx-background-color: transparent;
+    -fx-text-fill: -bleu-accent;
+    -fx-border-color: -bleu-accent;
+    -fx-border-width: 1.3px;
+    -fx-background-radius: 6px;
+    -fx-font-weight: bold;
+    -fx-font-size: 23px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+}
+
+.bouton-retour:hover {
+    -fx-background-color: #EAF2F7;
+}
+
+/* ============================================================
+   Onglets de sous-categories (ecran Caisse)
+   Onglets plus grands, plus faciles a toucher sur un ecran de caisse.
+   ============================================================ */
+
+.onglets-categories .tab {
+    -fx-pref-height: 40px;
+    -fx-padding: 0 20 0 20;
+}
+
+.onglets-categories .tab-label {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 0;
+}
+
+.onglets-categories .tab-header-area {
+    -fx-padding: 0;
+}
+
+.onglets-categories .tab:selected {
+    -fx-background-color: -bleu-accent;
+}
+.onglets-categories .tab:selected .tab-label {
+    -fx-text-fill: -blanc;
+}

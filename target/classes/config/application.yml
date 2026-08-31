@@ -1,0 +1,26 @@
+# ============================================================================
+# Configuration de l'application
+# En production, surchargez ces valeurs via les variables d'environnement
+# DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD (voir DatabaseConfig.java)
+# ============================================================================
+
+database:
+  host: localhost
+  port: 3306
+  name: supermarche
+  user: supermarche_app
+  password: UnMotDePasseFortIci
+  pool:
+    maxSize: 10
+    minIdle: 2
+    connectionTimeoutMs: 30000
+
+security:
+  bcryptStrength: 12
+  maxLoginAttempts: 5
+  lockoutDurationMinutes: 15
+
+application:
+  nomEntreprise: "Mon Supermarche"
+  devise: "EUR"
+  dossierPhotos: "/home/sow/supermarche/images/produits"
